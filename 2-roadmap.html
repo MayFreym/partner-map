@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Дорожная карта</title>
+<meta name="description" content="Дорожная карта проекта «Кабинет партнёра»: путь этапа 1, блокеры, развитие продукта и идеи.">
+<style>
+/* ===== Токены Bitrix24 Air (как в prototypes/index.html) ===== */
+:root{
+  --app:#EEF2F4; --card:#FFFFFF; --card-2:#F8FAFB; --ink:#333333; --ink-2:#525C69; --muted:#828B95; --dim:#A8ADB4;
+  --line:#EDEEF0; --line-2:#DFE0E3; --accent:#0075FF; --accent-weak:#E6F4FF; --sel:#EDF7FF; --link:#0154C8; --on-accent:#FFFFFF;
+  --ok:#24B547; --ok-weak:#CAFFE7; --ok-ink:#0B7A2B;
+  --warn:#E88C02; --warn-weak:#FFF4D6; --warn-ink:#8F5300;
+  --bad:#FF5752; --bad-weak:#FFE8E8; --bad-ink:#B8231E;
+  --info-ink:#0154C8; --na-weak:#EDEEF0; --na-ink:#5C6670;
+  --violet-weak:#F1E9FF; --violet-ink:#6A2FC2;
+  --shadow-s:0 2px 4px 0 rgba(0,0,0,.08);
+  --font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,Menlo,monospace;
+  --r-sm:8px; --r-md:10px; --r-lg:12px; --r-xl:16px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --app:#171717; --card:#262626; --card-2:#1F1F1F; --ink:#F8F8F8; --ink-2:#CACBCC; --muted:#A7A9AB; --dim:#828385;
+    --line:#373838; --line-2:#555657; --accent:#1587FA; --accent-weak:#062040; --sel:#1F3048; --link:#6AA6F5;
+    --ok:#22AC43; --ok-weak:#052717; --ok-ink:#6BD785; --warn:#E0911D; --warn-weak:#302000; --warn-ink:#F3B24F;
+    --bad:#F2473D; --bad-weak:#300E0C; --bad-ink:#FF8A84; --info-ink:#7AB1FF; --na-weak:#373838; --na-ink:#B5B7B9;
+    --violet-weak:#2A1748; --violet-ink:#C4A3FF; --shadow-s:0 2px 4px 0 rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --app:#171717; --card:#262626; --card-2:#1F1F1F; --ink:#F8F8F8; --ink-2:#CACBCC; --muted:#A7A9AB; --dim:#828385;
+  --line:#373838; --line-2:#555657; --accent:#1587FA; --accent-weak:#062040; --sel:#1F3048; --link:#6AA6F5;
+  --ok:#22AC43; --ok-weak:#052717; --ok-ink:#6BD785; --warn:#E0911D; --warn-weak:#302000; --warn-ink:#F3B24F;
+  --bad:#F2473D; --bad-weak:#300E0C; --bad-ink:#FF8A84; --info-ink:#7AB1FF; --na-weak:#373838; --na-ink:#B5B7B9;
+  --violet-weak:#2A1748; --violet-ink:#C4A3FF; --shadow-s:0 2px 4px 0 rgba(0,0,0,.4);
+}
+/* ===== База ===== */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:72px}
+body{margin:0;background:var(--app);color:var(--ink);font:15px/1.55 var(--font)}
+a{color:var(--link);text-decoration:none} a:hover{text-decoration:underline}
+code{font-family:var(--mono);font-size:.9em;background:var(--card-2);border:1px solid var(--line);border-radius:6px;padding:0 4px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+header.top{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:12px 16px;min-height:56px;flex-wrap:wrap;padding-top:6px;padding-bottom:6px}
+.brand{font-weight:700;color:var(--ink);line-height:1.2}
+.brand small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+nav.tabs{display:flex;gap:2px;flex-wrap:wrap;flex:1}
+nav.tabs a{padding:7px 11px;border-radius:var(--r-md);color:var(--ink-2);font-weight:500;font-size:14px}
+nav.tabs a:hover{background:var(--card-2);text-decoration:none}
+nav.tabs a[aria-current="page"]{background:var(--accent-weak);color:var(--link)}
+.theme-btn{border:1px solid var(--line-2);background:var(--card);color:var(--ink-2);border-radius:var(--r-md);padding:6px 10px;font:inherit;font-size:13px;cursor:pointer}
+.hero{padding:32px 0 4px}
+.hero h1{font-size:30px;line-height:1.2;margin:0 0 10px;letter-spacing:-.01em}
+.lead{font-size:17px;color:var(--ink-2);max-width:800px;margin:0}
+.meta{margin-top:12px;color:var(--muted);font-size:13px}
+section{margin:30px 0}
+h2{font-size:22px;line-height:1.3;margin:0 0 12px}
+h3{font-size:17px;line-height:1.35;margin:0 0 8px}
+p{margin:0 0 10px}
+ul,ol{margin:0 0 10px;padding-left:22px} li{margin:3px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-xl);padding:20px 22px;box-shadow:var(--shadow-s)}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.muted{color:var(--muted)} .small{font-size:13px}
+.st{display:inline-flex;align-items:center;gap:6px;padding:1px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;line-height:20px;vertical-align:middle}
+.st::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.st-done{background:var(--ok-weak);color:var(--ok-ink)}
+.st-doing{background:var(--accent-weak);color:var(--info-ink)}
+.st-client{background:var(--warn-weak);color:var(--warn-ink)}
+.st-us{background:var(--bad-weak);color:var(--bad-ink)}
+.st-future{background:var(--na-weak);color:var(--na-ink)}
+.st-idea{background:var(--violet-weak);color:var(--violet-ink)}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--card)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{background:var(--card-2);color:var(--ink-2);font-weight:600;font-size:13px}
+tr:last-child td{border-bottom:0}
+footer{margin:40px 0 32px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:16px}
+@media (max-width:600px){.hero h1{font-size:24px}.lead{font-size:16px}.card{padding:16px}}
+/* ===== Страница ===== */
+.legend{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+/* хроника */
+.chron{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.chron .day{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:12px 14px;border-top:4px solid var(--ok)}
+.chron .day.today{border-top-color:var(--accent)}
+.chron .day b{display:block;font-size:13px;color:var(--muted)}
+.chron .day ul{margin:6px 0 0;padding-left:18px;font-size:14px}
+/* вехи */
+.phase{margin:18px 0 6px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.phase h3{margin:0}
+.phase span{color:var(--muted);font-size:13px}
+ol.ms{list-style:none;margin:0;padding:0;position:relative}
+ol.ms::before{content:"";position:absolute;left:15px;top:8px;bottom:8px;width:2px;background:var(--line-2)}
+ol.ms>li{position:relative;padding:0 0 0 44px;margin:0 0 10px}
+ol.ms>li .dot{position:absolute;left:4px;top:14px;width:24px;height:24px;border-radius:50%;background:var(--card);border:2px solid var(--line-2);display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--muted)}
+ol.ms>li.done .dot{background:var(--ok);border-color:var(--ok);color:#fff}
+ol.ms>li.client .dot{background:var(--warn-weak);border-color:var(--warn);color:var(--warn-ink)}
+ol.ms>li.us .dot{background:var(--bad-weak);border-color:var(--bad);color:var(--bad-ink)}
+ol.ms>li.next .dot{border-color:var(--accent);color:var(--link)}
+.ms-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:12px 16px}
+.ms-head{display:flex;gap:8px 12px;align-items:center;flex-wrap:wrap}
+.ms-head b{font-size:15px}
+.ms-head .code{font-size:12px;font-weight:700;color:var(--muted)}
+.ms-card p{margin:6px 0 0;font-size:14px;color:var(--ink-2)}
+.ms-card .blk{margin-top:6px;font-size:13px}
+.ms-card .blk em{font-style:normal;color:var(--bad-ink);font-weight:600}
+.ms-card .remind{margin-top:8px;font-size:13px;background:var(--violet-weak);border-radius:8px;padding:6px 10px}
+.ms-card .remind b{color:var(--violet-ink)}
+/* матрица */
+.mx td.c,.mx th.c{text-align:center;white-space:nowrap}
+.mx th.c{min-width:92px}
+.mx td.c b{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;font-size:12px}
+.mx .bl{background:var(--bad);color:#fff}
+.mx .af{background:var(--warn-weak);color:var(--warn-ink);border:1px solid var(--warn)}
+.mx td:first-child{min-width:240px}
+.mx td .who{display:flex;width:max-content;margin-top:4px}
+.ty{display:inline-block;font-size:12px;font-weight:600;border-radius:6px;padding:1px 8px;white-space:nowrap}
+.ty-1{background:var(--bad-weak);color:var(--bad-ink)}
+.ty-2{background:var(--warn-weak);color:var(--warn-ink)}
+.ty-3{background:var(--ok-weak);color:var(--ok-ink)}
+.ty-f{background:var(--na-weak);color:var(--na-ink)}
+/* доска */
+.board{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.col{background:var(--card-2);border:1px solid var(--line);border-radius:var(--r-xl);padding:14px}
+.col h3{display:flex;justify-content:space-between;align-items:center}
+.col h3 small{font-weight:400;font-size:12px;color:var(--muted)}
+.item{background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);padding:10px 12px;margin:8px 0;font-size:14px}
+.item .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.col.now{border-top:4px solid var(--accent)} .col.nxt{border-top:4px solid var(--warn)} .col.ltr{border-top:4px solid var(--dim)}
+/* идеи */
+.ideas{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.idea{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.idea b{font-size:15px}
+.idea p{margin:0;font-size:14px;color:var(--ink-2)}
+.idea .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:4px}
+.tag{font-size:12px;padding:1px 8px;border-radius:6px;background:var(--card-2);border:1px solid var(--line);color:var(--ink-2);white-space:nowrap}
+.group-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:22px 0 10px}
+.group-h h3{margin:0}
+.group-h span{color:var(--muted);font-size:13px}
+.claude{border-style:dashed}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="brand">Кабинет партнёра<small>карта проекта</small></div>
+  <nav class="tabs" aria-label="Разделы">
+    <a href="index.html">Обзор</a>
+    <a href="1-process.html">Как разрабатывают</a>
+    <a href="2-roadmap.html" aria-current="page">Дорожная карта</a>
+    <a href="3-structure.html">Структура</a>
+    <a href="4-practices.html">Практики</a>
+  </nav>
+  <button class="theme-btn" id="themeBtn" type="button">Тема: авто</button>
+</div></header>
+
+<main class="wrap">
+  <div class="hero">
+    <h1>Дорожная карта</h1>
+    <p class="lead">Путь этапа 1 от разговора с заказчиком до запуска, что блокирует каждый шаг, и что дальше:
+      развитие продукта, доработки, облако, идеи.</p>
+    <p class="meta">Без дат: оценки ещё нет, сроки появятся в предложении. Порядок — по зависимостям, а не по календарю
+      (формат «сейчас / дальше / потом», Джанна Бастоу). Снимок на 21.10.2026.</p>
+  </div>
+
+  <section class="card">
+    <div class="legend"><span class="small muted">Статусы:</span>
+      <span class="st st-done">Готово</span><span class="st st-doing">Идёт</span><span class="st st-client">Ждём заказчика</span>
+      <span class="st st-us">Решаем мы</span><span class="st st-future">Впереди</span><span class="st st-idea">Идея</span>
+    </div>
+  </section>
+
+  <section aria-labelledby="chron-h">
+    <h2 id="chron-h">Что уже пройдено</h2>
+    <div class="chron">
+      <div class="day"><b>14.10.2026</b><ul>
+        <li>ТЗ разобрано в 12 шагов</li><li>Правило этапов: коробка → облако</li><li>Опросник: 55 вопросов, Word + Markdown</li></ul></div>
+      <div class="day"><b>16.10.2026</b><ul>
+        <li>Пришли частичные ответы заказчика</li><li>Принцип продукта «как есть»</li><li>Установка из портала, права — матрица Битрикса</li></ul></div>
+      <div class="day"><b>19.10.2026</b><ul>
+        <li>Решены Е1, И1, Л5, Ж1–Ж3, Л6</li><li>Кликабельный прототип: телефон и компьютер</li></ul></div>
+      <div class="day"><b>20.10.2026</b><ul>
+        <li>UI-кит b24ui, прототип в стиле Bitrix24 Air</li><li>Разбор ответов закрыт: 55 из 55</li><li>План разговора (22 вопроса), технические вопросы Т1–Т9, заготовки юридических текстов</li></ul></div>
+      <div class="day today"><b>21.10.2026 · сегодня</b><ul>
+        <li>Карта проекта: процесс, дорожная карта, структура</li>
+        <li>Практики Google, Microsoft, Amazon, Atlassian; находка — повтор передачи клиента</li>
+        <li>Сознательно отложено до вех — напоминания на М4, М5, М7</li></ul></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="path-h">
+    <h2 id="path-h">Путь этапа 1</h2>
+    <p class="small muted">Вехи по порядку. У каждой — что входит и что её держит. Номера М1–М17 — для ссылок в разговоре.</p>
+
+    <div class="phase"><h3>А. Договориться</h3><span>до первой строки кода</span></div>
+    <ol class="ms">
+      <li class="done"><span class="dot">✓</span><div class="ms-card">
+        <div class="ms-head"><span class="code">М1</span><b>Разбор ТЗ и ответов заказчика</b><span class="st st-done">Готово</span></div>
+        <p>12 шагов разбора, опросник, 55 ответов разобраны, решения в DECISIONS.md.</p></div></li>
+      <li class="client next"><span class="dot">2</span><div class="ms-card">
+        <div class="ms-head"><span class="code">М2</span><b>Разговор с заказчиком</b><span class="st st-client">Ждём заказчика</span></div>
+        <p>22 вопроса голосом, по одному; ответы — в колонку «Решение» и в журнал ответов.
+          План разговора.</p>
+        <div class="blk">Перед встречей: <em>проверить наши предложения по Е2, Е3, Л1, Л2, Д3</em> — это рекомендации Claude, их ещё не принимали.</div></div></li>
+      <li class="client"><span class="dot">3</span><div class="ms-card">
+        <div class="ms-head"><span class="code">М3</span><b>Ответы администратора заказчика</b><span class="st st-client">Ждём заказчика</span></div>
+        <p>Т1–Т9: версия и лицензия портала, DNS, SSL, доступ к серверу, учётные записи, почта, cron, капча, место для копии портала.
+          Список. Предложение не держат, нужны к установке.</p></div></li>
+      <li class="us"><span class="dot">4</span><div class="ms-card">
+        <div class="ms-head"><span class="code">М4</span><b>Наши решения</b><span class="st st-us">Решаем мы</span></div>
+        <p>Компоненты кита или только стили → затем TS или JS; В7 — реквизиты партнёров; Д4 — возврат после выплаты;
+          Л5 — режим «Каталог CRM» в цену или вложение в продукт; лицензия тестового портала.</p>
+        <div class="remind"><b>Не забыть:</b> формат DECISIONS.md — уровень уверенности и статус «заменено» (Практики, П6). Меняем только по вашему решению.</div></div></li>
+      <li><span class="dot">5</span><div class="ms-card">
+        <div class="ms-head"><span class="code">М5</span><b>Предложение по п. 13 ТЗ</b><span class="st st-future">Впереди</span></div>
+        <p>Архитектура и размещение, интеграция, вход и защита, хранение данных, прототипы, этапы, оценка диапазоном,
+          поддержка, риски и вопросы.</p>
+        <div class="blk">Держат: <em>Л1, Л2</em> (объём), <em>Д3</em> (модель денег), М2.</div>
+        <div class="remind"><b>Не забыть перед предложением:</b> час pre-mortem вместе с вами → единый список рисков → раздел «Риски» (Практики, П2–П3).</div></div></li>
+      <li><span class="dot">6</span><div class="ms-card">
+        <div class="ms-head"><span class="code">М6</span><b>Договор</b><span class="st st-future">Впереди</span></div>
+        <p>Объём, цена, график, приёмка, поддержка.</p>
+        <div class="blk">Держат: <em>права на код</em> и <em>поручение обработки ПДн</em> — решение с юристом.</div></div></li>
+    </ol>
+
+    <div class="phase"><h3>Б. Построить</h3><span>итерации с показом</span></div>
+    <ol class="ms">
+      <li><span class="dot">7</span><div class="ms-card">
+        <div class="ms-head"><span class="code">М7</span><b>План кода</b><span class="st st-future">Впереди</span></div>
+        <p>Модель данных, контракт API кабинета (OpenAPI), структура модуля, список прав, бэклог задач, условия готовности,
+          30 сделок приёмки — в тестовые сценарии.</p>
+        <div class="blk">Держат: <em>Е2</em> (схема ставок), <em>Д3</em>, <em>кит или стили / TS или JS</em>.</div>
+        <div class="remind"><b>Не забыть в плане кода:</b> полная модель угроз из черновика (+ срок хранения журнала, лимит запросов к API) ·
+          Definition of Done на трёх уровнях · контракт API с единым форматом ошибок и ID передачи (Практики, П7–П9).</div></div></li>
+      <li><span class="dot">8</span><div class="ms-card">
+        <div class="ms-head"><span class="code">М8</span><b>Окружение</b><span class="st st-future">Впереди</span></div>
+        <p>Git-репозиторий, тестовый портал свежей версии, воронка «Агенты» с автоматизациями и тестовые данные, сборка фронта.</p>
+        <div class="blk">Держит: <em>лицензия тестового портала</em>.</div></div></li>
+      <li><span class="dot">9</span><div class="ms-card">
+        <div class="ms-head"><span class="code">М9</span><b>Ходячий скелет</b><span class="st st-future">Впереди</span></div>
+        <p>Самый тонкий сквозной вариант: модуль ставится → партнёр входит по коду → кабинет показывает его сделку из CRM.
+          Все части соединены, функций минимум.</p></div></li>
+      <li><span class="dot">10</span><div class="ms-card">
+        <div class="ms-head"><span class="code">М10</span><b>Ядро: клиенты и деньги</b><span class="st st-future">Впереди</span></div>
+        <p>Передача тремя способами, проверка дублей, закрепление, этапы партнёра, правила ставок, начисления, сторно —
+          с юнит-тестами на сценарии приёмки.</p>
+        <div class="blk">Держат: <em>Д1</em> (откуда оплата), <em>Е2, Е3</em>; влияют Д9, Г6, Г7.</div></div></li>
+      <li><span class="dot">11</span><div class="ms-card">
+        <div class="ms-head"><span class="code">М11</span><b>Кабинет целиком</b><span class="st st-future">Впереди</span></div>
+        <p>Главная, мои клиенты, карточка, передача, вознаграждение, документы, профиль, уведомления, сеансы — телефон и компьютер.</p></div></li>
+      <li><span class="dot">12</span><div class="ms-card">
+        <div class="ms-head"><span class="code">М12</span><b>Раздел для сотрудников</b><span class="st st-future">Впереди</span></div>
+        <p>Раздел «Партнёры» в портале, матрица прав, вкладка «Партнёр» в сделке, начисления, выплаты и реестр в Excel,
+          справочники, журнал, кабинет «глазами партнёра».</p></div></li>
+      <li><span class="dot">13</span><div class="ms-card">
+        <div class="ms-head"><span class="code">М13</span><b>Установка без программиста</b><span class="st st-future">Впереди</span></div>
+        <p>Установщик с проверкой версий, мастер настройки, страница «Проверка», инструкции для администратора и пользователей.</p></div></li>
+      <li><span class="dot">14</span><div class="ms-card">
+        <div class="ms-head"><span class="code">М14</span><b>Демо заказчику</b><span class="st st-future">Впереди</span></div>
+        <p>Работающий модуль на нашем тестовом портале с тестовыми данными.</p></div></li>
+    </ol>
+
+    <div class="phase"><h3>В. Сдать и запустить</h3></div>
+    <ol class="ms">
+      <li><span class="dot">15</span><div class="ms-card">
+        <div class="ms-head"><span class="code">М15</span><b>Тестирование</b><span class="st st-future">Впереди</span></div>
+        <p>30 сделок с ручным расчётом, «А не видит Б», 360 px и браузеры, нагрузка 500 партнёров / 10 000 сделок;
+          пентест (рекомендуем) и время на исправления.</p></div></li>
+      <li><span class="dot">16</span><div class="ms-card">
+        <div class="ms-head"><span class="code">М16</span><b>Установка у заказчика и приёмка</b><span class="st st-future">Впереди</span></div>
+        <p>Копия рабочего портала на сервере заказчика; DNS, сертификат, почта, воронка; приёмка по п. 12 ТЗ.</p>
+        <div class="blk">Держат: <em>Б6</em> (где приёмка), <em>Т1–Т9</em>, <em>Д9</em> (эталон расчёта).</div></div></li>
+      <li><span class="dot">17</span><div class="ms-card">
+        <div class="ms-head"><span class="code">М17</span><b>Запуск</b><span class="st st-future">Впереди</span></div>
+        <p>Сначала несколько партнёров (пилот), потом все.</p>
+        <div class="blk">Держат: <em>Г1</em> (воронка и автоматизации), <em>З2</em> (юридические тексты), <em>Б7</em> (почта — единственный вход).</div></div></li>
+    </ol>
+    <p class="small muted">Дальше — сопровождение, этап развития по запросу и этап 2 (облако) после полной сдачи этапа 1: ниже, в «Развитии продукта».</p>
+  </section>
+
+  <section aria-labelledby="mx-h">
+    <h2 id="mx-h">Что блокирует что</h2>
+    <p class="small muted"><b style="color:var(--bad-ink)">●</b> — без ответа веху не пройти; <b style="color:var(--warn-ink)">○</b> — влияет: меняет объём, оценку или детали.
+      Строки — открытые вопросы, столбцы — вехи.</p>
+    <p class="small muted">Тип решения — по правилу Amazon о «дверях» (<a href="4-practices.html#now">Практики, П1</a>):
+      <span class="ty ty-1">необратимо</span> и <span class="ty ty-2">дорого менять</span> — решать вдумчиво, на них в первую очередь время разговора;
+      <span class="ty ty-3">обратимо</span> — можно решить быстро и поправить потом; <span class="ty ty-f">выяснить факт</span> — выбора нет, нужен ответ.
+      Оценка Claude, не решение.</p>
+    <div class="tbl"><table class="mx">
+      <thead><tr><th>Вопрос</th><th>Тип решения<br><span class="muted">оценка Claude</span></th><th class="c">Предложение<br><span class="muted">М5</span></th><th class="c">Договор<br><span class="muted">М6</span></th><th class="c">План кода<br><span class="muted">М7</span></th><th class="c">Ядро и демо<br><span class="muted">М8–М14</span></th><th class="c">Приёмка<br><span class="muted">М16</span></th><th class="c">Запуск<br><span class="muted">М17</span></th></tr></thead>
+      <tbody>
+        <tr><td><b>Л1★</b> Агентства<span class="who st st-client">Ждём заказчика</span></td><td><span class="ty ty-3">обратимо</span></td><td class="c"><b class="bl">●</b></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td></tr>
+        <tr><td><b>Л2</b> Акт по шаблону<span class="who st st-client">Ждём заказчика</span></td><td><span class="ty ty-3">обратимо</span></td><td class="c"><b class="bl">●</b></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td></tr>
+        <tr><td><b>Д3</b> Где хранить начисления и выплаты<span class="who st st-client">Ждём заказчика</span></td><td><span class="ty ty-1">необратимо</span></td><td class="c"><b class="af">○</b></td><td class="c"></td><td class="c"><b class="bl">●</b></td><td class="c"></td><td class="c"></td><td class="c"></td></tr>
+        <tr><td><b>Д1★</b> Откуда Битрикс24 знает об оплате<span class="who st st-client">Ждём заказчика</span></td><td><span class="ty ty-f">выяснить факт</span></td><td class="c"><b class="af">○</b></td><td class="c"></td><td class="c"></td><td class="c"><b class="bl">●</b></td><td class="c"></td><td class="c"></td></tr>
+        <tr><td><b>Е2</b> Схема выбора правила ставки и сетка<span class="who st st-client">Ждём заказчика</span></td><td><span class="ty ty-2">дорого менять</span></td><td class="c"></td><td class="c"></td><td class="c"><b class="bl">●</b></td><td class="c"><b class="bl">●</b></td><td class="c"></td><td class="c"></td></tr>
+        <tr><td><b>Е3</b> Ставка при повторной покупке<span class="who st st-client">Ждём заказчика</span></td><td><span class="ty ty-3">обратимо</span></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"><b class="bl">●</b></td><td class="c"></td><td class="c"></td></tr>
+        <tr><td><b>Д9</b> От какой суммы процент<span class="who st st-client">Ждём заказчика</span></td><td><span class="ty ty-f">выяснить факт</span></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"><b class="af">○</b></td><td class="c"><b class="bl">●</b></td><td class="c"></td></tr>
+        <tr><td><b>Г1★</b> Воронка «Агенты» и автоматизации<span class="who st st-client">Ждём заказчика</span></td><td><span class="ty ty-2">дорого менять</span></td><td class="c"><b class="af">○</b></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"><b class="bl">●</b></td></tr>
+        <tr><td><b>Г6, Г7</b> Повторная покупка в ИЖС/ПРОМ; клиент по звонку<span class="who st st-client">Ждём заказчика</span></td><td><span class="ty ty-3">обратимо</span></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"><b class="af">○</b></td><td class="c"></td><td class="c"></td></tr>
+        <tr><td><b>Б6★</b> Где проходит приёмка<span class="who st st-client">Ждём заказчика</span></td><td><span class="ty ty-f">выяснить факт</span></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"><b class="bl">●</b></td><td class="c"></td></tr>
+        <tr><td><b>З2★</b> Юридические тексты<span class="who st st-client">Ждём заказчика</span></td><td><span class="ty ty-f">выяснить факт</span></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"><b class="bl">●</b></td></tr>
+        <tr><td><b>Т1–Т9, Б7</b> Сервер, домен, почта<span class="who st st-client">Ждём администратора</span></td><td><span class="ty ty-f">выяснить факт</span></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"><b class="bl">●</b></td><td class="c"><b class="bl">●</b></td></tr>
+        <tr><td><b>Д6</b> НДФЛ: что пишем у суммы<span class="who st st-client">Ждём заказчика</span></td><td><span class="ty ty-3">обратимо</span></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"><b class="af">○</b></td></tr>
+        <tr><td><b>Права на код, ПДн в договоре</b><span class="who st st-us">Решаем мы · юрист</span></td><td><span class="ty ty-1">необратимо</span></td><td class="c"><b class="af">○</b></td><td class="c"><b class="bl">●</b></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td></tr>
+        <tr><td><b>Кит или стили → TS или JS</b><span class="who st st-us">Решаем мы</span></td><td><span class="ty ty-2">дорого менять</span></td><td class="c"><b class="af">○</b></td><td class="c"></td><td class="c"><b class="bl">●</b></td><td class="c"></td><td class="c"></td><td class="c"></td></tr>
+        <tr><td><b>Тестовый портал</b> (лицензия)<span class="who st st-us">Решаем мы</span></td><td><span class="ty ty-3">обратимо</span></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"><b class="bl">●</b></td><td class="c"></td><td class="c"></td></tr>
+        <tr><td><b>В7</b> Реквизиты партнёров<span class="who st st-us">Решаем мы</span></td><td><span class="ty ty-2">дорого менять</span></td><td class="c"></td><td class="c"></td><td class="c"><b class="af">○</b></td><td class="c"></td><td class="c"></td><td class="c"></td></tr>
+        <tr><td><b>Д4</b> Возврат после выплаты<span class="who st st-us">Решаем мы · после Д1</span></td><td><span class="ty ty-3">обратимо</span></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"><b class="af">○</b></td><td class="c"></td></tr>
+        <tr><td><b>Повтор передачи клиента</b> без дублей сделок<span class="who st st-us">Решаем мы · новое</span></td><td><span class="ty ty-2">дорого менять</span></td><td class="c"></td><td class="c"></td><td class="c"><b class="bl">●</b></td><td class="c"><b class="af">○</b></td><td class="c"></td><td class="c"></td></tr>
+      </tbody>
+    </table></div>
+    <p class="small muted">Сейчас главный узел — разговор с заказчиком (М2): через него проходят 12 строк из 19.
+      Необратимых и дорогих среди них три: Д3, Е2, Г1 — с них и начинать.</p>
+  </section>
+
+  <section aria-labelledby="board-h">
+    <h2 id="board-h">Сейчас · дальше · потом</h2>
+    <div class="board">
+      <div class="col now">
+        <h3>Сейчас <small>можно делать, пока ждём</small></h3>
+        <div class="item">Проверить наши предложения по Е2, Е3, Л1, Л2, Д3 в плане разговора<div class="tags"><span class="st st-us">Решаем мы</span><span class="tag">до встречи</span></div></div>
+        <div class="item">Отправить технические вопросы администратору<div class="tags"><span class="st st-us">Решаем мы</span><span class="tag">Т1–Т9</span></div></div>
+        <div class="item">Правки прототипа: экран «Документы», одна синяя кнопка на главной<div class="tags"><span class="st st-us">ждут слова</span><span class="tag">Л3</span></div></div>
+        <div class="item">Разобрать содержание прототипа экран за экраном<div class="tags"><span class="st st-future">Впереди</span><span class="tag">п. 6.1–6.6</span></div></div>
+        <div class="item">Решить: компоненты кита или только стили, затем TS или JS<div class="tags"><span class="st st-us">Решаем мы</span><span class="tag">шаг 8</span></div></div>
+        <div class="item">Выбрать лицензию тестового портала<div class="tags"><span class="st st-us">Решаем мы</span></div></div>
+        <div class="item">Завести git-репозиторий проекта<div class="tags"><span class="st st-idea">Рекомендация</span></div></div>
+        <div class="item">Час «вскрытия до смерти» (pre-mortem) → список рисков<div class="tags"><span class="st st-idea">Рекомендация</span><span class="tag">Практики, П2</span></div></div>
+      </div>
+      <div class="col nxt">
+        <h3>Дальше <small>после разговора</small></h3>
+        <div class="item">Записать решения заказчика, закрыть отложенные вопросы<div class="tags"><span class="tag">М2</span></div></div>
+        <div class="item">Единый список рисков<div class="tags"><span class="tag">раздел предложения</span></div></div>
+        <div class="item">Предложение по п. 13 ТЗ: оценка, этапы, риски<div class="tags"><span class="tag">М5</span></div></div>
+        <div class="item">Договор: права на код, ПДн<div class="tags"><span class="tag">М6</span></div></div>
+        <div class="item">План кода → окружение → ходячий скелет<div class="tags"><span class="tag">М7–М9</span></div></div>
+        <div class="item">Разработка этапа 1 итерациями, демо<div class="tags"><span class="tag">М10–М14</span></div></div>
+      </div>
+      <div class="col ltr">
+        <h3>Потом <small>после запуска</small></h3>
+        <div class="item">Сопровождение: версии, миграции, поддержка</div>
+        <div class="item">Этап развития по ТЗ — по запросу заказчика</div>
+        <div class="item">Доработки по заказу</div>
+        <div class="item">Этап 2 — облако, после полной сдачи этапа 1</div>
+        <div class="item">Поставка модуля следующим клиентам «как есть»</div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="dev-h">
+    <h2 id="dev-h">Развитие продукта</h2>
+    <p class="small muted">Всё, что не входит в этап 1: из ТЗ, из разбора, ваши идеи и мои предложения. Метка показывает, откуда пункт.</p>
+
+    <div class="group-h"><h3>Этап развития по ТЗ</h3><span>п. 12 ТЗ, на коробке, по запросу</span></div>
+    <div class="ideas">
+      <div class="idea"><b>Агентства</b><p>Руководитель агентства видит клиентов всех своих агентов. В этапе 1 агентство — обычный партнёр.</p><div class="tags"><span class="tag">ТЗ п. 3, 12</span><span class="tag">Л1</span><span class="st st-client">ждёт Л1</span></div></div>
+      <div class="idea"><b>Уровни и ступенчатые ставки</b><p>Базовый / Silver / Gold по объёму продаж. Заготовка уже в плане: набор условий в правилах ставок расширяемый.</p><div class="tags"><span class="tag">ТЗ п. 8.2</span><span class="tag">Л6</span></div></div>
+      <div class="idea"><b>Акты по шаблону</b><p>Генерация акта через «Генератор документов» Битрикс24: шаблон .docx заказчик правит сам.</p><div class="tags"><span class="tag">ТЗ п. 9, 12</span><span class="tag">Л2</span><span class="st st-client">ждёт Л2</span></div></div>
+      <div class="idea"><b>Новости</b><p>Объявления о посёлках и акциях в кабинете. Документы при этом — уже в этапе 1.</p><div class="tags"><span class="tag">ТЗ п. 9</span><span class="tag">Л3</span></div></div>
+      <div class="idea"><b>Telegram и мессенджеры</b><p>Уведомления партнёру в мессенджер. В ТЗ — Telegram, этап 2.</p><div class="tags"><span class="tag">ТЗ п. 6.8</span></div></div>
+      <div class="idea"><b>Витрина свободных участков</b><p>Каталог участков для партнёра. В этапе 1 — выбор посёлка и участка в форме передачи.</p><div class="tags"><span class="tag">ТЗ п. 12</span><span class="tag">Л5</span></div></div>
+      <div class="idea"><b>Аналитика руководителя</b><p>По партнёрам: передано, конверсия, сумма сделок, начислено, выплачено. Данные копятся с первого дня.</p><div class="tags"><span class="tag">ТЗ п. 9</span><span class="tag">Л4</span></div></div>
+      <div class="idea"><b>Кабинет для штатных агентов</b><p>Для агентов с учётной записью Битрикс24 — дополнительная аналитика.</p><div class="tags"><span class="tag">ТЗ п. 2</span></div></div>
+      <div class="idea"><b>Проверка самозанятых</b><p>Проверка статуса самозанятого партнёра. Сейчас заказчику не нужна.</p><div class="tags"><span class="tag">ТЗ п. 11, 12</span></div></div>
+    </div>
+
+    <div class="group-h"><h3>Доработки по заказу</h3><span>из разбора, в этап 1 не входят; пойдут в предложение и условия поддержки</span></div>
+    <div class="ideas">
+      <div class="idea"><b>Зеркало начислений в смарт-процесс</b><p>Только для чтения поверх таблиц модуля: штатные списки, роботы, отчёты.</p><div class="tags"><span class="tag">Д3, вариант В</span><span class="tag">шаг 4</span></div></div>
+      <div class="idea"><b>Реестр выплат для 1С или банка</b><p>Через точку расширения выгрузки. В этапе 1 — .xlsx в нашем формате.</p><div class="tags"><span class="tag">Д8</span><span class="tag">шаг 4</span></div></div>
+      <div class="idea"><b>Ответ менеджера из сделки</b><p>Поле «Ответить партнёру» во вкладке «Партнёр»: письмо партнёру и ответ в его кабинете.</p><div class="tags"><span class="tag">И1</span><span class="tag">шаг 9</span></div></div>
+      <div class="idea"><b>Другие источники участков</b><p>Товарный каталог, универсальные списки, 1С, сайт застройщика — через точку расширения.</p><div class="tags"><span class="tag">Л5</span><span class="tag">шаг 8</span></div></div>
+      <div class="idea"><b>Загрузка документов партнёром</b><p>Подписанный договор, чеки самозанятого — в закрытое хранилище.</p><div class="tags"><span class="tag">Л3</span><span class="tag">шаг 8</span></div></div>
+      <div class="idea"><b>Несколько сотрудников в одном партнёре</b><p>Несколько e-mail для входа и общие клиенты — для агентств.</p><div class="tags"><span class="tag">Л1, вариант Б</span><span class="tag">шаг 3</span></div></div>
+      <div class="idea"><b>Вход по SMS</b><p>Через провайдера коробки (messageservice). Интерфейс «канал доставки кода» закладываем сразу.</p><div class="tags"><span class="tag">Б8</span><span class="tag">шаг 7</span></div></div>
+      <div class="idea"><b>Удержание после возврата</b><p>Автоматическое удержание из следующей выплаты и перенос долга.</p><div class="tags"><span class="tag">Д4</span><span class="tag">шаг 4</span><span class="st st-us">после Д1</span></div></div>
+      <div class="idea"><b>Оплаты из 1С</b><p>Если оплаты отмечаются только в 1С — обмен с 1С вместо ручной отметки в Битрикс24.</p><div class="tags"><span class="tag">Д1</span><span class="tag">шаг 4</span><span class="st st-client">ждёт Д1</span></div></div>
+    </div>
+
+    <div class="group-h"><h3>Ваши идеи</h3><span>«Обсудить позже» в РАЗБОР-ПЛАНА</span></div>
+    <div class="ideas">
+      <div class="idea"><b>Вход и уведомления через мессенджеры</b><p>Бот присылает код или «Войти через VK ID / Яндекс ID». Учесть ограничения в РФ и 152-ФЗ.</p><div class="tags"><span class="tag">шаг 7</span><span class="st st-idea">Идея</span></div></div>
+      <div class="idea"><b>Цвет и логотип клиента</b><p>Настройкой модуля через токены оформления — без правки кода.</p><div class="tags"><span class="tag">шаг 8</span><span class="st st-idea">Идея</span></div></div>
+      <div class="idea"><b>Полная автоматизация установки</b><p>Включая DNS-запись и сертификат — без ручных шагов вне портала.</p><div class="tags"><span class="tag">шаг 2</span><span class="st st-idea">Идея</span></div></div>
+      <div class="idea"><b>Менеджер решает судьбу дубля</b><p>Режим «с подтверждением»: передача ждёт менеджера, он выбирает контакт и отмечает «новый / из базы».</p><div class="tags"><span class="tag">Г4, Г5</span><span class="tag">шаг 6</span><span class="st st-idea">Идея</span></div></div>
+    </div>
+
+    <div class="group-h"><h3>Мои предложения</h3><span>Claude; не обсуждались, на рассмотрение</span></div>
+    <div class="ideas">
+      <div class="idea claude"><b>Ссылка партнёра для клиента</b><p>Личная ссылка или QR-код: клиент сам оставляет заявку, сделка сразу привязана к партнёру. Обычная практика партнёрских программ; учесть закрепление и согласие клиента.</p><div class="tags"><span class="st st-idea">Идея</span><span class="tag">продукт</span></div></div>
+      <div class="idea claude"><b>Калькулятор вознаграждения</b><p>«Участок за 2 400 000 ₽ → вы получите ≈ 48 000 ₽» по текущим ставкам партнёра. Мотивирует и снимает вопросы к менеджеру.</p><div class="tags"><span class="st st-idea">Идея</span><span class="tag">кабинет</span></div></div>
+      <div class="idea claude"><b>Кабинет как приложение на телефоне</b><p>PWA: иконка на экране без магазинов приложений; позже — push-уведомления вместо части писем.</p><div class="tags"><span class="st st-idea">Идея</span><span class="tag">кабинет</span></div></div>
+      <div class="idea claude"><b>Демо-режим с тестовыми данными</b><p>Для показа модуля следующим клиентам: включается в настройках, данные не смешиваются с рабочими.</p><div class="tags"><span class="st st-idea">Идея</span><span class="tag">продукт</span></div></div>
+      <div class="idea claude"><b>Импорт партнёров из Excel</b><p>Текущему заказчику не нужен (В1), но у следующих клиентов агенты часто уже есть в таблице.</p><div class="tags"><span class="st st-idea">Идея</span><span class="tag">продукт</span></div></div>
+      <div class="idea claude"><b>«Проверка» по расписанию</b><p>После обновлений Битрикса страница «Проверка» запускается сама и пишет администратору, если что-то сломалось: матрица прав опирается на внутренний API.</p><div class="tags"><span class="st st-idea">Идея</span><span class="tag">сопровождение</span></div></div>
+    </div>
+
+    <div class="group-h"><h3>Этап 2 — облако</h3><span>только после полной сдачи этапа 1</span></div>
+    <div class="grid g2">
+      <div class="card">
+        <h3>Что это</h3>
+        <ul>
+          <li>Отдельное локальное приложение для облачного Битрикс24, не Маркетплейс.</li>
+          <li>Данные CRM — через REST (<code>crm.item.list</code>, <code>crm.stagehistory.list</code>, <code>crm.duplicate.findbycomm</code>…), вход в портал — OAuth.</li>
+          <li>Свой сервер в РФ, офлайн-события, приёмка «тестовый облачный портал» из п. 12 ТЗ.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Что переносится из этапа 1</h3>
+        <ul>
+          <li>Чистый PHP расчёта денег (Domain) с тестами.</li>
+          <li>Фронт кабинета и контракт его API.</li>
+          <li>Интерфейс <code>CrmGateway</code>: в этапе 2 у него появится REST-реализация.</li>
+          <li>Настройки по символьным кодам, без зашитых ID.</li>
+        </ul>
+        <p class="small"><span class="st st-us">Условие</span> переносить можно, только если позволят права на код (решение с юристом).</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="how-h">
+    <h2 id="how-h">Как выбирать, что делать дальше</h2>
+    <p>Когда этап 1 сдан и очередь из пунктов выше станет реальной, предлагаю оценивать каждый пункт по пяти вопросам:</p>
+    <ol>
+      <li><b>Ценность:</b> что меняется для заказчика и партнёров, если сделать.</li>
+      <li><b>Охват:</b> нужно только этому заказчику или почти любому клиенту — универсальные пункты в приоритете (принцип продукта).</li>
+      <li><b>Трудоёмкость:</b> грубо — дни или недели.</li>
+      <li><b>Риск:</b> насколько понятно, как делать.</li>
+      <li><b>Зависимости:</b> что должно быть готово раньше.</li>
+    </ol>
+    <p class="small muted" style="margin:0">Простая формула для сравнения: (ценность × охват) ÷ трудоёмкость. Это упрощённый вариант RICE.</p>
+  </section>
+
+  <footer>Снимок на 21.10.2026 · Кабинет партнёра · карта проекта</footer>
+</main>
+<script>
+(function(){
+  var KEY='zk-map-theme', root=document.documentElement, btn=document.getElementById('themeBtn');
+  var names={auto:'Тема: авто',light:'Тема: светлая',dark:'Тема: тёмная'};
+  function get(){try{return localStorage.getItem(KEY)||'auto'}catch(e){return 'auto'}}
+  function set(v){try{localStorage.setItem(KEY,v)}catch(e){}}
+  function apply(v){if(v==='auto'){root.removeAttribute('data-theme')}else{root.setAttribute('data-theme',v)} if(btn){btn.textContent=names[v]}}
+  var cur=get(); apply(cur);
+  if(btn){btn.addEventListener('click',function(){cur=cur==='auto'?'light':(cur==='light'?'dark':'auto'); set(cur); apply(cur)})}
+})();
+</script>
+</body>
+</html>

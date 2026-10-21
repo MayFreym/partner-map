@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Карта проекта «Кабинет партнёра»</title>
+<meta name="description" content="Обзор проекта «Кабинет партнёра»: где мы сейчас, как устроен процесс, дорожная карта и структура приложения.">
+<style>
+/* ===== Токены Bitrix24 Air (как в prototypes/index.html) ===== */
+:root{
+  --app:#EEF2F4; --card:#FFFFFF; --card-2:#F8FAFB; --ink:#333333; --ink-2:#525C69; --muted:#828B95; --dim:#A8ADB4;
+  --line:#EDEEF0; --line-2:#DFE0E3; --accent:#0075FF; --accent-weak:#E6F4FF; --sel:#EDF7FF; --link:#0154C8; --on-accent:#FFFFFF;
+  --ok:#24B547; --ok-weak:#CAFFE7; --ok-ink:#0B7A2B;
+  --warn:#E88C02; --warn-weak:#FFF4D6; --warn-ink:#8F5300;
+  --bad:#FF5752; --bad-weak:#FFE8E8; --bad-ink:#B8231E;
+  --info-ink:#0154C8; --na-weak:#EDEEF0; --na-ink:#5C6670;
+  --violet-weak:#F1E9FF; --violet-ink:#6A2FC2;
+  --shadow-s:0 2px 4px 0 rgba(0,0,0,.08);
+  --font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,Menlo,monospace;
+  --r-sm:8px; --r-md:10px; --r-lg:12px; --r-xl:16px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --app:#171717; --card:#262626; --card-2:#1F1F1F; --ink:#F8F8F8; --ink-2:#CACBCC; --muted:#A7A9AB; --dim:#828385;
+    --line:#373838; --line-2:#555657; --accent:#1587FA; --accent-weak:#062040; --sel:#1F3048; --link:#6AA6F5;
+    --ok:#22AC43; --ok-weak:#052717; --ok-ink:#6BD785; --warn:#E0911D; --warn-weak:#302000; --warn-ink:#F3B24F;
+    --bad:#F2473D; --bad-weak:#300E0C; --bad-ink:#FF8A84; --info-ink:#7AB1FF; --na-weak:#373838; --na-ink:#B5B7B9;
+    --violet-weak:#2A1748; --violet-ink:#C4A3FF; --shadow-s:0 2px 4px 0 rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --app:#171717; --card:#262626; --card-2:#1F1F1F; --ink:#F8F8F8; --ink-2:#CACBCC; --muted:#A7A9AB; --dim:#828385;
+  --line:#373838; --line-2:#555657; --accent:#1587FA; --accent-weak:#062040; --sel:#1F3048; --link:#6AA6F5;
+  --ok:#22AC43; --ok-weak:#052717; --ok-ink:#6BD785; --warn:#E0911D; --warn-weak:#302000; --warn-ink:#F3B24F;
+  --bad:#F2473D; --bad-weak:#300E0C; --bad-ink:#FF8A84; --info-ink:#7AB1FF; --na-weak:#373838; --na-ink:#B5B7B9;
+  --violet-weak:#2A1748; --violet-ink:#C4A3FF; --shadow-s:0 2px 4px 0 rgba(0,0,0,.4);
+}
+/* ===== База ===== */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--app);color:var(--ink);font:15px/1.55 var(--font)}
+a{color:var(--link);text-decoration:none} a:hover{text-decoration:underline}
+code{font-family:var(--mono);font-size:.9em;background:var(--card-2);border:1px solid var(--line);border-radius:6px;padding:0 4px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+header.top{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:12px 16px;min-height:56px;flex-wrap:wrap;padding-top:6px;padding-bottom:6px}
+.brand{font-weight:700;color:var(--ink);line-height:1.2}
+.brand small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+nav.tabs{display:flex;gap:2px;flex-wrap:wrap;flex:1}
+nav.tabs a{padding:7px 11px;border-radius:var(--r-md);color:var(--ink-2);font-weight:500;font-size:14px}
+nav.tabs a:hover{background:var(--card-2);text-decoration:none}
+nav.tabs a[aria-current="page"]{background:var(--accent-weak);color:var(--link)}
+.theme-btn{border:1px solid var(--line-2);background:var(--card);color:var(--ink-2);border-radius:var(--r-md);padding:6px 10px;font:inherit;font-size:13px;cursor:pointer}
+.hero{padding:32px 0 4px}
+.hero h1{font-size:30px;line-height:1.2;margin:0 0 10px;letter-spacing:-.01em}
+.lead{font-size:17px;color:var(--ink-2);max-width:800px;margin:0}
+.meta{margin-top:12px;color:var(--muted);font-size:13px}
+section{margin:30px 0}
+h2{font-size:22px;line-height:1.3;margin:0 0 12px}
+h3{font-size:17px;line-height:1.35;margin:0 0 8px}
+p{margin:0 0 10px}
+ul,ol{margin:0 0 10px;padding-left:22px} li{margin:3px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-xl);padding:20px 22px;box-shadow:var(--shadow-s)}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.muted{color:var(--muted)} .small{font-size:13px}
+.st{display:inline-flex;align-items:center;gap:6px;padding:1px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;line-height:20px;vertical-align:middle}
+.st::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.st-done{background:var(--ok-weak);color:var(--ok-ink)}
+.st-doing{background:var(--accent-weak);color:var(--info-ink)}
+.st-client{background:var(--warn-weak);color:var(--warn-ink)}
+.st-us{background:var(--bad-weak);color:var(--bad-ink)}
+.st-future{background:var(--na-weak);color:var(--na-ink)}
+.st-idea{background:var(--violet-weak);color:var(--violet-ink)}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--card)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{background:var(--card-2);color:var(--ink-2);font-weight:600;font-size:13px}
+tr:last-child td{border-bottom:0}
+footer{margin:40px 0 32px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:16px}
+@media (max-width:600px){.hero h1{font-size:24px}.lead{font-size:16px}.card{padding:16px}}
+/* ===== Страница ===== */
+.now{border-left:4px solid var(--accent)}
+.now-path{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 4px}
+.now-path span.step{padding:6px 12px;border-radius:var(--r-md);background:var(--card-2);border:1px solid var(--line);font-size:14px}
+.now-path span.step.here{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:600}
+.now-path span.arr{color:var(--dim)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:16px}
+.kpi{background:var(--card-2);border:1px solid var(--line);border-radius:var(--r-lg);padding:12px 14px}
+.kpi b{display:block;font-size:24px;line-height:1.2}
+.kpi span{font-size:13px;color:var(--muted)}
+a.page-card{display:block;color:inherit;transition:border-color .15s}
+a.page-card:hover{text-decoration:none;border-color:var(--accent)}
+a.page-card .num{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--accent-weak);color:var(--link);font-weight:700;margin-bottom:10px}
+a.page-card h3{color:var(--ink)}
+a.page-card p{color:var(--ink-2);font-size:14px}
+a.page-card .go{color:var(--link);font-weight:600;font-size:14px}
+dl.gl{display:grid;grid-template-columns:minmax(150px,220px) 1fr;gap:0;margin:0}
+dl.gl dt,dl.gl dd{padding:9px 12px;border-bottom:1px solid var(--line);margin:0}
+dl.gl dt{font-weight:600}
+dl.gl dd{color:var(--ink-2)}
+@media (max-width:600px){dl.gl{grid-template-columns:1fr}dl.gl dt{border-bottom:0;padding-bottom:0}}
+.warnbox{background:var(--warn-weak);border:1px solid var(--line);border-radius:var(--r-lg);padding:12px 14px;color:var(--ink)}
+.legend{display:flex;flex-wrap:wrap;gap:8px}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="brand">Кабинет партнёра<small>карта проекта</small></div>
+  <nav class="tabs" aria-label="Разделы">
+    <a href="index.html" aria-current="page">Обзор</a>
+    <a href="1-process.html">Как разрабатывают</a>
+    <a href="2-roadmap.html">Дорожная карта</a>
+    <a href="3-structure.html">Структура</a>
+    <a href="4-practices.html">Практики</a>
+  </nav>
+  <button class="theme-btn" id="themeBtn" type="button">Тема: авто</button>
+</div></header>
+
+<main class="wrap">
+  <div class="hero">
+    <h1>Карта проекта «Кабинет партнёра»</h1>
+    <p class="lead">Здесь собрано всё для ориентира: как обычно идёт разработка и как идём мы, куда движемся и из каких частей
+      будет состоять приложение. Детали решений здесь не повторяются, их источник — рабочие документы проекта.</p>
+    <p class="meta">Снимок на 21.10.2026 · источник правды — docs/РАЗБОР-ПЛАНА.md
+      и docs/DECISIONS.md</p>
+  </div>
+
+  <section class="card now" aria-labelledby="now-h">
+    <h2 id="now-h">Где мы сейчас</h2>
+    <p>Разбор требований почти закончен: ТЗ разобрано, все 55 ответов заказчика разобраны. Ждём разговора с заказчиком
+      по 22 вопросам. После него пишем предложение, потом план кода и разработку.</p>
+    <div class="now-path" aria-label="Ближайший путь">
+      <span class="step">ТЗ и опросник</span><span class="arr">→</span>
+      <span class="step">Разбор ответов</span><span class="arr">→</span>
+      <span class="step here">Разговор с заказчиком</span><span class="arr">→</span>
+      <span class="step">Предложение (п. 13 ТЗ)</span><span class="arr">→</span>
+      <span class="step">Договор</span><span class="arr">→</span>
+      <span class="step">План кода</span><span class="arr">→</span>
+      <span class="step">Разработка</span>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><b>55 / 55</b><span>ответов заказчика разобрано</span></div>
+      <div class="kpi"><b>22</b><span>вопроса на разговор, 5 из них ★ блокируют</span></div>
+      <div class="kpi"><b>9</b><span>технических вопросов администратору (Т1–Т9)</span></div>
+      <div class="kpi"><b>6 экранов</b><span>в прототипе: вход + 5 экранов п. 13 ТЗ</span></div>
+      <div class="kpi"><b>0</b><span>строк кода модуля: код пишем после договора и плана кода</span></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="pages-h">
+    <h2 id="pages-h">Страницы</h2>
+    <div class="grid g3">
+      <a class="card page-card" href="1-process.html">
+        <span class="num">1</span>
+        <h3>Как разрабатывают приложения</h3>
+        <p>11 стадий от идеи до сопровождения, у каждой — подпункты, результат и критерий перехода.
+          Рядом с каждой стадией — как это у нас и на чём мы сейчас. В конце сверка: что делаем правильно и чего не хватает.</p>
+        <span class="go">Открыть →</span>
+      </a>
+      <a class="card page-card" href="2-roadmap.html">
+        <span class="num">2</span>
+        <h3>Дорожная карта</h3>
+        <p>Путь этапа 1 по вехам, таблица «что блокирует что», доска «сейчас / дальше / потом», развитие продукта:
+          этап развития по ТЗ, доработки, идеи, облако.</p>
+        <span class="go">Открыть →</span>
+      </a>
+      <a class="card page-card" href="3-structure.html">
+        <span class="num">3</span>
+        <h3>Структура приложения</h3>
+        <p>От общей картины к папкам модуля: кто вокруг системы, из каких частей она состоит, где какие данные хранятся,
+          как идут ключевые сценарии и от чего всё зависит. Компоненты кликабельные: видно связи.</p>
+        <span class="go">Открыть →</span>
+      </a>
+      <a class="card page-card" href="4-practices.html">
+        <span class="num">4</span>
+        <h3>Практики крупных команд</h3>
+        <p>Что полезного у Google, Microsoft, Amazon и Atlassian и куда это ложится у нас: главная находка (повтор передачи
+          клиента), шаблоны к предложению, плану кода и запуску, бесплатное обучение.</p>
+        <span class="go">Открыть →</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="grid g2" aria-label="Главное">
+    <div class="card">
+      <h2>Главное за минуту</h2>
+      <ul>
+        <li><b>Что строим.</b> Внешний веб-кабинет для партнёров (агентов), которые приводят покупателей участков:
+          клиенты, этапы сделок, вознаграждение. Плюс раздел для сотрудников внутри Битрикс24.</li>
+        <li><b>На чём.</b> D7-модуль <code>zk.partners</code> для коробочного Битрикс24; кабинет — на Vue 3 в стиле Bitrix24 Air.</li>
+        <li><b>Этапы.</b> Этап 1 — коробка (сейчас). Этап 2 — облако, только после полной сдачи этапа 1.</li>
+        <li><b>Принцип продукта.</b> Модуль поставляется «как есть»: настраивается почти всё, доработки под клиента — через
+          точки расширения, обновления — версии и миграции.</li>
+        <li><b>Ближайшие шаги.</b> Разговор с заказчиком → предложение по п. 13 ТЗ → договор → план кода.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Обозначения статусов</h2>
+      <p class="small muted">Одни и те же на всех страницах.</p>
+      <div class="legend" style="margin-bottom:12px">
+        <span class="st st-done">Готово</span>
+        <span class="st st-doing">Идёт</span>
+        <span class="st st-client">Ждём заказчика</span>
+        <span class="st st-us">Решаем мы</span>
+        <span class="st st-future">Впереди</span>
+        <span class="st st-idea">Идея</span>
+      </div>
+      <ul class="small">
+        <li><b>Готово</b> — сделано или решено, записано в документах.</li>
+        <li><b>Идёт</b> — в работе сейчас.</li>
+        <li><b>Ждём заказчика</b> — вопрос в плане разговора или у администратора заказчика.</li>
+        <li><b>Решаем мы</b> — открыто у нас: у пользователя, с юристом или в «Обсудить позже».</li>
+        <li><b>Впереди</b> — по плану, ещё не начинали.</li>
+        <li><b>Идея</b> — не решение; на обсуждение.</li>
+      </ul>
+      <p class="small muted" style="margin:0">Коды вопросов (Г1, Д3, Е2, Л1…) — номера из опросника заказчику; «шаг N» — шаг в РАЗБОР-ПЛАНА.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="gl-h">
+    <h2 id="gl-h">Словарь</h2>
+    <div class="warnbox small" style="margin-bottom:12px"><b>Осторожно, слово «этап».</b> У нас оно встречается в четырёх
+      смыслах. Чтобы не путаться, на этих страницах шаги процесса разработки называются «стадиями», а этапы ТЗ — «этапами ТЗ».</div>
+    <div class="card" style="padding:4px 0">
+      <dl class="gl">
+        <dt>Этап (наш)</dt><dd>Этап 1 — модуль для коробки. Этап 2 — облако, после полной сдачи этапа 1.</dd>
+        <dt>Этап ТЗ</dt><dd>0 «Подготовка CRM», 1 «Запуск», 2 «Развитие». Наш этап 1 = этапы ТЗ 0 и 1. Этап ТЗ 2 у нас называется «этап развития», тоже на коробке, по запросу.</dd>
+        <dt>Этап партнёра</dt><dd>Один из 10 понятных этапов клиента в кабинете (п. 7 ТЗ): «Передан», «Показ», «Бронь»… Получается из стадии CRM через сопоставление.</dd>
+        <dt>Стадия CRM</dt><dd>Стадия сделки в воронке «Агенты» Битрикс24. Сотрудник заказчика сопоставляет стадии с этапами партнёра без программиста.</dd>
+        <dt>Стадия разработки</dt><dd>Шаг процесса разработки: требования, архитектура, предложение и т. д. (страница «Как разрабатывают»).</dd>
+        <dt>Партнёр (агент)</dt><dd>Физлицо, самозанятый, ИП или агентство: приводит покупателей за вознаграждение. Учётки Битрикс24 нет.</dd>
+        <dt>Способ передачи</dt><dd>«Ведёт сам», «На подбор», «На оформление». От способа зависят стартовая стадия сделки и ставка.</dd>
+        <dt>Клиент из базы</dt><dd>Клиент, который уже был в CRM до передачи (любая сделка за всё время) или закреплён за другим партнёром. Ставка снижена.</dd>
+        <dt>Закрепление</dt><dd>Клиент закреплён за партнёром, который передал его первым, на 6 или 12 месяцев с момента отправки.</dd>
+        <dt>Начисление · сторно</dt><dd>Начисление — строка «ставка × поступившая оплата», по каждой оплате, в копейках. Сторно — отмена начисления при возврате денег.</dd>
+        <dt>Сетка ставок</dt><dd>Набор общих правил ставок с датой начала действия. Новую сетку готовят заранее, с даты она включается сама.</dd>
+        <dt>Смарт-процесс</dt><dd>Своя сущность CRM Битрикс24 со стадиями и полями. У нас — «Партнёры»; у заказчика в смарт-процессе лежат участки.</dd>
+        <dt>D7 · ORM</dt><dd>D7 — современное ядро Битрикса. ORM — работа с таблицами через классы PHP, а не через SQL вручную.</dd>
+        <dt>Агент Битрикса</dt><dd>Фоновая задача по расписанию (через cron): досылает заявки, сверяет оплаты, отправляет письма.</dd>
+        <dt>SPA · JSON API</dt><dd>SPA — веб-приложение одной страницей (наш кабинет на Vue). JSON API — адреса на сервере, откуда кабинет берёт данные.</dd>
+        <dt>Точка расширения</dt><dd>Место, где клиент или мы дорабатываем поведение без правки кода модуля: события модуля, шаблоны в <code>/local/</code>, настройки.</dd>
+        <dt>Мастер · «Проверка»</dt><dd>Мастер — пошаговая настройка модуля в портале после установки. «Проверка» — страница, которая показывает, чего не хватает для работы.</dd>
+        <dt>Ходячий скелет</dt><dd>Самая тонкая сквозная версия системы: все части соединены и работают, функций минимум. С неё начинается разработка.</dd>
+        <dt>ADR</dt><dd>Architecture Decision Record — короткая запись решения: контекст → решение → последствия. Наш аналог — DECISIONS.md и шаги разбора.</dd>
+        <dt>Definition of Done</dt><dd>Общий список условий, когда задача считается готовой: код, тесты, проверка, документация.</dd>
+        <dt>Повтор без дублей</dt><dd>Идемпотентность: операцию можно безопасно повторить. У каждой передачи клиента свой ID, повтор с тем же ID не создаёт вторую сделку (практика Amazon).</dd>
+        <dt>Pre-mortem</dt><dd>«Вскрытие до смерти»: час, когда команда представляет, что проект провалился, и ищет причины. Так собирают список рисков (Atlassian).</dd>
+        <dt>STRIDE</dt><dd>Шесть видов угроз безопасности: подмена, порча данных, отказ от действия, утечка, отказ в обслуживании, повышение прав (Microsoft).</dd>
+        <dt>Тип решения</dt><dd>Необратимое, дорогое для изменения, обратимое или «выяснить факт». На необратимые решения тратят больше времени (правило «дверей» Amazon).</dd>
+      </dl>
+    </div>
+  </section>
+
+  <footer>Снимок на 21.10.2026 · Кабинет партнёра · карта проекта</footer>
+</main>
+<script>
+(function(){
+  var KEY='zk-map-theme', root=document.documentElement, btn=document.getElementById('themeBtn');
+  var names={auto:'Тема: авто',light:'Тема: светлая',dark:'Тема: тёмная'};
+  function get(){try{return localStorage.getItem(KEY)||'auto'}catch(e){return 'auto'}}
+  function set(v){try{localStorage.setItem(KEY,v)}catch(e){}}
+  function apply(v){if(v==='auto'){root.removeAttribute('data-theme')}else{root.setAttribute('data-theme',v)} if(btn){btn.textContent=names[v]}}
+  var cur=get(); apply(cur);
+  if(btn){btn.addEventListener('click',function(){cur=cur==='auto'?'light':(cur==='light'?'dark':'auto'); set(cur); apply(cur)})}
+})();
+</script>
+</body>
+</html>

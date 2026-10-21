@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Структура приложения</title>
+<meta name="description" content="Из каких частей состоит кабинет партнёра: контекст, контейнеры, компоненты со связями, данные, сценарии, зависимости, папки модуля.">
+<style>
+/* ===== Токены Bitrix24 Air (как в prototypes/index.html) ===== */
+:root{
+  --app:#EEF2F4; --card:#FFFFFF; --card-2:#F8FAFB; --ink:#333333; --ink-2:#525C69; --muted:#828B95; --dim:#A8ADB4;
+  --line:#EDEEF0; --line-2:#DFE0E3; --accent:#0075FF; --accent-weak:#E6F4FF; --sel:#EDF7FF; --link:#0154C8; --on-accent:#FFFFFF;
+  --ok:#24B547; --ok-weak:#CAFFE7; --ok-ink:#0B7A2B;
+  --warn:#E88C02; --warn-weak:#FFF4D6; --warn-ink:#8F5300;
+  --bad:#FF5752; --bad-weak:#FFE8E8; --bad-ink:#B8231E;
+  --info-ink:#0154C8; --na-weak:#EDEEF0; --na-ink:#5C6670;
+  --violet-weak:#F1E9FF; --violet-ink:#6A2FC2;
+  --shadow-s:0 2px 4px 0 rgba(0,0,0,.08);
+  --font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,Menlo,monospace;
+  --r-sm:8px; --r-md:10px; --r-lg:12px; --r-xl:16px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --app:#171717; --card:#262626; --card-2:#1F1F1F; --ink:#F8F8F8; --ink-2:#CACBCC; --muted:#A7A9AB; --dim:#828385;
+    --line:#373838; --line-2:#555657; --accent:#1587FA; --accent-weak:#062040; --sel:#1F3048; --link:#6AA6F5;
+    --ok:#22AC43; --ok-weak:#052717; --ok-ink:#6BD785; --warn:#E0911D; --warn-weak:#302000; --warn-ink:#F3B24F;
+    --bad:#F2473D; --bad-weak:#300E0C; --bad-ink:#FF8A84; --info-ink:#7AB1FF; --na-weak:#373838; --na-ink:#B5B7B9;
+    --violet-weak:#2A1748; --violet-ink:#C4A3FF; --shadow-s:0 2px 4px 0 rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --app:#171717; --card:#262626; --card-2:#1F1F1F; --ink:#F8F8F8; --ink-2:#CACBCC; --muted:#A7A9AB; --dim:#828385;
+  --line:#373838; --line-2:#555657; --accent:#1587FA; --accent-weak:#062040; --sel:#1F3048; --link:#6AA6F5;
+  --ok:#22AC43; --ok-weak:#052717; --ok-ink:#6BD785; --warn:#E0911D; --warn-weak:#302000; --warn-ink:#F3B24F;
+  --bad:#F2473D; --bad-weak:#300E0C; --bad-ink:#FF8A84; --info-ink:#7AB1FF; --na-weak:#373838; --na-ink:#B5B7B9;
+  --violet-weak:#2A1748; --violet-ink:#C4A3FF; --shadow-s:0 2px 4px 0 rgba(0,0,0,.4);
+}
+/* ===== База ===== */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:72px}
+body{margin:0;background:var(--app);color:var(--ink);font:15px/1.55 var(--font)}
+a{color:var(--link);text-decoration:none} a:hover{text-decoration:underline}
+code{font-family:var(--mono);font-size:.9em;background:var(--card-2);border:1px solid var(--line);border-radius:6px;padding:0 4px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+header.top{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:12px 16px;min-height:56px;flex-wrap:wrap;padding-top:6px;padding-bottom:6px}
+.brand{font-weight:700;color:var(--ink);line-height:1.2}
+.brand small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+nav.tabs{display:flex;gap:2px;flex-wrap:wrap;flex:1}
+nav.tabs a{padding:7px 11px;border-radius:var(--r-md);color:var(--ink-2);font-weight:500;font-size:14px}
+nav.tabs a:hover{background:var(--card-2);text-decoration:none}
+nav.tabs a[aria-current="page"]{background:var(--accent-weak);color:var(--link)}
+.theme-btn{border:1px solid var(--line-2);background:var(--card);color:var(--ink-2);border-radius:var(--r-md);padding:6px 10px;font:inherit;font-size:13px;cursor:pointer}
+.hero{padding:32px 0 4px}
+.hero h1{font-size:30px;line-height:1.2;margin:0 0 10px;letter-spacing:-.01em}
+.lead{font-size:17px;color:var(--ink-2);max-width:800px;margin:0}
+.meta{margin-top:12px;color:var(--muted);font-size:13px}
+section{margin:30px 0}
+h2{font-size:22px;line-height:1.3;margin:0 0 12px}
+h3{font-size:17px;line-height:1.35;margin:0 0 8px}
+p{margin:0 0 10px}
+ul,ol{margin:0 0 10px;padding-left:22px} li{margin:3px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-xl);padding:20px 22px;box-shadow:var(--shadow-s)}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.muted{color:var(--muted)} .small{font-size:13px}
+.st{display:inline-flex;align-items:center;gap:6px;padding:1px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;line-height:20px;vertical-align:middle}
+.st::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.st-done{background:var(--ok-weak);color:var(--ok-ink)}
+.st-doing{background:var(--accent-weak);color:var(--info-ink)}
+.st-client{background:var(--warn-weak);color:var(--warn-ink)}
+.st-us{background:var(--bad-weak);color:var(--bad-ink)}
+.st-future{background:var(--na-weak);color:var(--na-ink)}
+.st-idea{background:var(--violet-weak);color:var(--violet-ink)}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--card)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{background:var(--card-2);color:var(--ink-2);font-weight:600;font-size:13px}
+tr:last-child td{border-bottom:0}
+footer{margin:40px 0 32px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:16px}
+@media (max-width:600px){.hero h1{font-size:24px}.lead{font-size:16px}.card{padding:16px}}
+/* ===== Страница ===== */
+.toc{display:flex;flex-wrap:wrap;gap:8px}
+.toc a{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:13px;color:var(--ink-2)}
+.toc a:hover{border-color:var(--accent);text-decoration:none}
+.lvl{display:inline-block;font-size:12px;font-weight:700;color:var(--link);background:var(--accent-weak);border-radius:6px;padding:1px 8px;margin-right:6px;vertical-align:middle}
+/* диаграммы */
+.dg{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:var(--r-xl);padding:10px;box-shadow:var(--shadow-s)}
+.dg svg{display:block;width:100%;min-width:780px;height:auto}
+.dg-note{font-size:13px;color:var(--muted);margin-top:8px}
+.d-bound{fill:none;stroke:var(--dim);stroke-width:1.5;stroke-dasharray:6 5}
+.d-box{fill:var(--card-2);stroke:var(--line-2);stroke-width:1.5}
+.d-acc{fill:var(--accent-weak);stroke:var(--accent);stroke-width:1.5}
+.d-core{fill:var(--accent);stroke:var(--accent);stroke-width:1.5}
+.d-person{fill:var(--card);stroke:var(--ink-2);stroke-width:1.5}
+.d-ext{fill:var(--card);stroke:var(--line-2);stroke-width:1.5}
+.d-ext-dash{fill:var(--card);stroke:var(--dim);stroke-width:1.5;stroke-dasharray:5 4}
+.d-t{fill:var(--ink);font-family:var(--font);font-size:14px;font-weight:700}
+.d-s{fill:var(--muted);font-family:var(--font);font-size:12px}
+.d-l{fill:var(--ink-2);font-family:var(--font);font-size:13px}
+.d-cap{fill:var(--muted);font-family:var(--font);font-size:12px;font-weight:600;letter-spacing:.03em}
+.d-e{fill:var(--ink-2);font-family:var(--font);font-size:12px}
+.d-w{fill:var(--on-accent);font-family:var(--font);font-size:13px}
+.d-wt{fill:var(--on-accent);font-family:var(--font);font-size:15px;font-weight:700}
+.d-edge{stroke:var(--muted);stroke-width:1.5;fill:none}
+.d-edge-dash{stroke:var(--muted);stroke-width:1.5;fill:none;stroke-dasharray:5 4}
+.d-arrow{fill:var(--muted)}
+/* обозреватель компонентов */
+.cx{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+@media (max-width:900px){.cx{grid-template-columns:1fr}}
+.layer{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:10px 12px;margin-bottom:8px;position:relative}
+.layer-h{font-weight:700;font-size:14px;margin-bottom:6px}
+.layer-h span{font-weight:400;color:var(--muted);font-size:12px;margin-left:6px}
+.layer.l-dm{border-left:4px solid var(--ok)}
+.layer.l-in{border-left:4px solid var(--accent)}
+.layer.l-svc{border-left:4px solid var(--violet-ink)}
+.layer.l-ad{border-left:4px solid var(--warn)}
+.layer.l-plat{border-left:4px solid var(--dim)}
+.down{text-align:center;color:var(--dim);font-size:12px;margin:-4px 0 4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:13px;line-height:1.3;border:1px solid var(--line-2);background:var(--card-2);color:var(--ink);border-radius:8px;padding:5px 9px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:opacity .15s,background .15s,border-color .15s}
+.chip:hover{border-color:var(--accent)}
+.chip i{width:7px;height:7px;border-radius:50%;flex:none;background:var(--dim)}
+.chip i.done{background:var(--ok)} .chip i.part{background:var(--accent)} .chip i.open{background:var(--warn)}
+.cx.has-sel #cx-layers .chip{opacity:.38}
+.cx.has-sel #cx-layers .chip.sel,.cx.has-sel #cx-layers .chip.dep,.cx.has-sel #cx-layers .chip.use{opacity:1}
+.chip.sel{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600}
+.chip.sel i{background:var(--on-accent)}
+.chip.dep{background:var(--ok-weak);border-color:var(--ok);color:var(--ok-ink)}
+.chip.use{background:var(--warn-weak);border-color:var(--warn);color:var(--warn-ink)}
+.cx-panel{position:sticky;top:72px;background:var(--card);border:1px solid var(--line);border-radius:var(--r-xl);padding:16px 18px;box-shadow:var(--shadow-s)}
+@media (max-width:900px){.cx-panel{position:static}}
+.cx-panel h3{margin:4px 0 6px}
+.cx-panel .lay{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.cx-panel dl{display:grid;grid-template-columns:70px 1fr;gap:4px 10px;margin:10px 0;font-size:13px}
+.cx-panel dt{color:var(--muted)} .cx-panel dd{margin:0}
+.cx-panel .rel{margin-top:10px}
+.cx-panel .rel b{display:block;font-size:12px;margin-bottom:4px}
+.cx-panel .rel .chips .chip{font-size:12px;padding:3px 8px}
+.cx-legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px;color:var(--ink-2);margin:0 0 10px}
+.cx-legend span{display:inline-flex;align-items:center;gap:5px}
+.sw{width:14px;height:14px;border-radius:4px;display:inline-block;border:1px solid}
+/* сценарии */
+.flows{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+ol.flow{list-style:none;counter-reset:f;padding:0;margin:0}
+ol.flow li{counter-increment:f;position:relative;padding:6px 0 6px 34px;border-bottom:1px dashed var(--line);font-size:14px}
+ol.flow li:last-child{border-bottom:0}
+ol.flow li::before{content:counter(f);position:absolute;left:0;top:7px;width:22px;height:22px;border-radius:50%;background:var(--card-2);border:1px solid var(--line-2);display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--ink-2)}
+.who{display:inline-block;font-size:11px;font-weight:700;border-radius:5px;padding:0 6px;margin-right:6px;vertical-align:1px;text-transform:uppercase;letter-spacing:.03em}
+.w-p{background:var(--accent-weak);color:var(--info-ink)}
+.w-m{background:var(--ok-weak);color:var(--ok-ink)}
+.w-c{background:var(--warn-weak);color:var(--warn-ink)}
+.w-s{background:var(--na-weak);color:var(--na-ink)}
+.w-k{background:var(--violet-weak);color:var(--violet-ink)}
+.flow-note{font-size:13px;color:var(--muted);margin-top:8px}
+/* дерево */
+pre.tree{margin:0;background:var(--card-2);border:1px solid var(--line);border-radius:var(--r-lg);padding:14px 16px;overflow-x:auto;font:13px/1.6 var(--mono);color:var(--ink)}
+pre.tree .c{color:var(--muted)}
+pre.tree .h{color:var(--link);font-weight:700}
+.rule{align-self:start;border-left:4px solid var(--ok);background:var(--ok-weak);border-radius:var(--r-md);padding:12px 14px;color:var(--ink)}
+.rule b{color:var(--ok-ink)}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="brand">Кабинет партнёра<small>карта проекта</small></div>
+  <nav class="tabs" aria-label="Разделы">
+    <a href="index.html">Обзор</a>
+    <a href="1-process.html">Как разрабатывают</a>
+    <a href="2-roadmap.html">Дорожная карта</a>
+    <a href="3-structure.html" aria-current="page">Структура</a>
+    <a href="4-practices.html">Практики</a>
+  </nav>
+  <button class="theme-btn" id="themeBtn" type="button">Тема: авто</button>
+</div></header>
+
+<main class="wrap">
+  <div class="hero">
+    <h1>Структура приложения</h1>
+    <p class="lead">Из каких частей состоит кабинет партнёра, где они работают, как связаны и от чего зависят.
+      Идём сверху вниз, как в модели C4: кто вокруг системы → что где запускается → из каких компонентов состоит → папки модуля.</p>
+    <p class="meta">Это черновик архитектуры по решениям шагов 1–11. Кода ещё нет; названия классов и таблиц рабочие —
+      окончательные будут в плане кода. Снимок на 21.10.2026.</p>
+  </div>
+
+  <nav class="toc" aria-label="Содержание">
+    <a href="#ctx">1. Контекст</a><a href="#cont">2. Контейнеры</a><a href="#comp">3. Компоненты и связи</a>
+    <a href="#data">4. Данные</a><a href="#flows">5. Сценарии</a><a href="#deps">6. Внешние зависимости</a>
+    <a href="#tree">7. Папки модуля</a><a href="#tz">8. ТЗ → части системы</a>
+  </nav>
+
+  <section class="card" aria-labelledby="one-h">
+    <h2 id="one-h">Одним абзацем</h2>
+    <p>Модуль <code>zk.partners</code> живёт внутри коробочного Битрикс24 заказчика, на его сервере. Партнёрам он открывает
+      отдельный сайт-кабинет на поддомене; сотрудникам — раздел и вкладки внутри портала. Клиенты и сделки хранятся в CRM —
+      это единственный источник правды. Всё остальное (вход партнёров, правила ставок, начисления, журнал) — в таблицах модуля
+      в той же базе. Внешних серверов и копий данных нет.</p>
+  </section>
+
+  <!-- ===== 1. Контекст ===== -->
+  <section id="ctx" aria-labelledby="ctx-h">
+    <h2 id="ctx-h"><span class="lvl">C4 · 1</span>Контекст: кто и что вокруг</h2>
+    <div class="dg">
+      <svg viewBox="0 0 1000 512" role="img" aria-labelledby="ctx-t ctx-d">
+        <title id="ctx-t">Контекст системы</title>
+        <desc id="ctx-d">Партнёр заходит в кабинет по HTTPS на поддомене. Модуль zk.partners работает внутри Битрикс24 на сервере заказчика и обменивается с ним через ORM и события. Сотрудники работают в портале. Внешние сервисы: капча Яндекса для анкеты, почта заказчика для писем, SMS-провайдер позже. Реестр выплат уходит в банк вне системы.</desc>
+        <defs><marker id="ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-arrow"/></marker></defs>
+        <rect x="228" y="28" width="560" height="322" rx="16" class="d-bound"/>
+        <text x="244" y="50" class="d-cap">СЕРВЕР ЗАКАЗЧИКА · BitrixVM · ДАННЫЕ В РФ</text>
+        <!-- партнёр -->
+        <rect x="10" y="168" width="160" height="116" rx="14" class="d-person"/>
+        <text x="90" y="196" class="d-t" text-anchor="middle">Партнёр</text>
+        <text x="90" y="218" class="d-s" text-anchor="middle">внешний агент</text>
+        <text x="90" y="236" class="d-s" text-anchor="middle">без учётки Битрикс24</text>
+        <text x="90" y="254" class="d-s" text-anchor="middle">телефон или компьютер</text>
+        <!-- модуль -->
+        <rect x="248" y="72" width="232" height="256" rx="14" class="d-acc"/>
+        <text x="266" y="100" class="d-t">Модуль zk.partners</text>
+        <text x="266" y="120" class="d-s">наша разработка</text>
+        <text x="266" y="152" class="d-l">• кабинет партнёра</text>
+        <text x="266" y="176" class="d-l">• раздел для сотрудников</text>
+        <text x="266" y="200" class="d-l">• расчёт вознаграждения</text>
+        <text x="266" y="224" class="d-l">• вход, права, журнал</text>
+        <text x="266" y="248" class="d-l">• мастер и «Проверка»</text>
+        <!-- битрикс -->
+        <rect x="548" y="72" width="220" height="256" rx="14" class="d-box"/>
+        <text x="566" y="100" class="d-t">Битрикс24 · коробка</text>
+        <text x="566" y="120" class="d-s">платформа заказчика</text>
+        <text x="566" y="152" class="d-l">• CRM: сделки, контакты</text>
+        <text x="566" y="176" class="d-l">• смарт-процессы</text>
+        <text x="566" y="200" class="d-l">• уведомления, почта</text>
+        <text x="566" y="224" class="d-l">• агенты по расписанию</text>
+        <text x="566" y="248" class="d-l">• пользователи и права</text>
+        <line x1="483" y1="200" x2="545" y2="200" class="d-edge" marker-start="url(#ar1)" marker-end="url(#ar1)"/>
+        <text x="514" y="188" class="d-e" text-anchor="middle">ORM D7</text>
+        <text x="514" y="219" class="d-e" text-anchor="middle">события</text>
+        <!-- партнёр → модуль -->
+        <line x1="172" y1="226" x2="245" y2="226" class="d-edge" marker-end="url(#ar1)"/>
+        <text x="199" y="214" class="d-e" text-anchor="middle">HTTPS</text>
+        <text x="199" y="244" class="d-e" text-anchor="middle">кабинет</text>
+        <!-- сотрудники -->
+        <rect x="832" y="168" width="160" height="116" rx="14" class="d-person"/>
+        <text x="912" y="196" class="d-t" text-anchor="middle">Сотрудники</text>
+        <text x="912" y="218" class="d-s" text-anchor="middle">менеджеры, бухгалтерия</text>
+        <text x="912" y="236" class="d-s" text-anchor="middle">руководитель, админ</text>
+        <text x="912" y="254" class="d-s" text-anchor="middle">своя учётка портала</text>
+        <line x1="830" y1="226" x2="771" y2="226" class="d-edge" marker-end="url(#ar1)"/>
+        <text x="810" y="214" class="d-e" text-anchor="middle">портал</text>
+        <!-- внешние -->
+        <rect x="262" y="392" width="200" height="62" rx="12" class="d-ext"/>
+        <text x="362" y="418" class="d-t" text-anchor="middle">Yandex SmartCaptcha</text>
+        <text x="362" y="438" class="d-s" text-anchor="middle">защита анкеты</text>
+        <line x1="362" y1="330" x2="362" y2="389" class="d-edge" marker-end="url(#ar1)"/>
+        <text x="370" y="374" class="d-e">анкета</text>
+        <rect x="500" y="392" width="160" height="62" rx="12" class="d-ext"/>
+        <text x="580" y="418" class="d-t" text-anchor="middle">Почта заказчика</text>
+        <text x="580" y="438" class="d-s" text-anchor="middle">SMTP · SPF · DKIM</text>
+        <line x1="580" y1="330" x2="580" y2="389" class="d-edge" marker-end="url(#ar1)"/>
+        <text x="588" y="374" class="d-e">письма</text>
+        <rect x="676" y="392" width="128" height="62" rx="12" class="d-ext-dash"/>
+        <text x="740" y="418" class="d-t" text-anchor="middle">SMS-провайдер</text>
+        <text x="740" y="438" class="d-s" text-anchor="middle">опция, позже</text>
+        <line x1="740" y1="330" x2="740" y2="389" class="d-edge-dash" marker-end="url(#ar1)"/>
+        <rect x="832" y="392" width="160" height="62" rx="12" class="d-ext"/>
+        <text x="912" y="418" class="d-t" text-anchor="middle">Банк, 1С</text>
+        <text x="912" y="438" class="d-s" text-anchor="middle">вне системы</text>
+        <line x1="912" y1="286" x2="912" y2="389" class="d-edge" marker-end="url(#ar1)"/>
+        <text x="920" y="344" class="d-e">реестр .xlsx</text>
+        <!-- письмо партнёру -->
+        <path d="M580,456 L580,496 L90,496 L90,287" class="d-edge" marker-end="url(#ar1)"/>
+        <text x="335" y="489" class="d-e" text-anchor="middle">письмо партнёру: код входа и уведомления</text>
+      </svg>
+    </div>
+    <p class="dg-note">Раздел для сотрудников — часть модуля, но открывается внутри портала, поэтому стрелка от сотрудников идёт в Битрикс24.
+      Банк и 1С в систему не встроены: бухгалтерия выгружает реестр в Excel и платит сама (Д8).</p>
+  </section>
+
+  <!-- ===== 2. Контейнеры ===== -->
+  <section id="cont" aria-labelledby="cont-h">
+    <h2 id="cont-h"><span class="lvl">C4 · 2</span>Контейнеры: что где запускается</h2>
+    <div class="dg">
+      <svg viewBox="0 0 1000 552" role="img" aria-labelledby="cont-t cont-d">
+        <title id="cont-t">Контейнеры системы</title>
+        <desc id="cont-d">В браузере партнёра работает кабинет на Vue. Он обращается по HTTPS к входу кабинета на поддомене: тот отдаёт файлы и JSON API. Сотрудник работает в портале, где модуль показывает раздел, вкладки, мастер и права. Вход кабинета и интерфейс сотрудников вызывают ядро модуля. Ядро работает с платформой Битрикс24 через ORM и события, хранит данные в базе MySQL коробки, файлы документов — в закрытом хранилище. Фоновые задачи по расписанию запускают ядро и отправляют почту.</desc>
+        <defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-arrow"/></marker></defs>
+        <rect x="244" y="20" width="748" height="520" rx="16" class="d-bound"/>
+        <text x="260" y="42" class="d-cap">СЕРВЕР ЗАКАЗЧИКА · BitrixVM</text>
+        <!-- браузер партнёра -->
+        <rect x="8" y="70" width="210" height="150" rx="14" class="d-bound"/>
+        <text x="20" y="90" class="d-cap">БРАУЗЕР ПАРТНЁРА</text>
+        <rect x="22" y="102" width="182" height="104" rx="12" class="d-acc"/>
+        <text x="36" y="128" class="d-t">Кабинет · SPA</text>
+        <text x="36" y="150" class="d-l">Vue 3 + Vite</text>
+        <text x="36" y="170" class="d-l">стиль Bitrix24 Air</text>
+        <text x="36" y="190" class="d-s">готовые файлы</text>
+        <!-- браузер сотрудника -->
+        <rect x="8" y="370" width="210" height="130" rx="14" class="d-bound"/>
+        <text x="20" y="390" class="d-cap">БРАУЗЕР СОТРУДНИКА</text>
+        <rect x="22" y="402" width="182" height="84" rx="12" class="d-box"/>
+        <text x="36" y="428" class="d-t">Портал Битрикс24</text>
+        <text x="36" y="450" class="d-s">своя учётная запись</text>
+        <text x="36" y="470" class="d-s">обычный вход</text>
+        <!-- вход кабинета -->
+        <rect x="268" y="70" width="232" height="130" rx="12" class="d-acc"/>
+        <text x="284" y="96" class="d-t">Вход кабинета</text>
+        <text x="284" y="116" class="d-s">agent.&lt;домен&gt;/partner/</text>
+        <text x="284" y="142" class="d-l">• отдаёт файлы кабинета</text>
+        <text x="284" y="162" class="d-l">• JSON API /partner/api/v1</text>
+        <text x="284" y="182" class="d-l">• чужие адреса → 404</text>
+        <!-- интерфейс сотрудников -->
+        <rect x="268" y="360" width="232" height="140" rx="12" class="d-acc"/>
+        <text x="284" y="386" class="d-t">Интерфейс сотрудников</text>
+        <text x="284" y="406" class="d-s">в портале, часть модуля</text>
+        <text x="284" y="432" class="d-l">• раздел /partners/</text>
+        <text x="284" y="452" class="d-l">• вкладки сделки и партнёра</text>
+        <text x="284" y="472" class="d-l">• мастер, «Проверка», права</text>
+        <!-- платформа -->
+        <rect x="556" y="56" width="210" height="104" rx="12" class="d-box"/>
+        <text x="572" y="82" class="d-t">Платформа Битрикс24</text>
+        <text x="572" y="104" class="d-l">crm · main · ui</text>
+        <text x="572" y="124" class="d-l">im · messageservice</text>
+        <text x="572" y="144" class="d-s">ядро коробки</text>
+        <!-- ядро модуля -->
+        <rect x="556" y="206" width="210" height="136" rx="12" class="d-core"/>
+        <text x="572" y="234" class="d-wt">Ядро модуля</text>
+        <text x="572" y="254" class="d-w">zk.partners · PHP 8 · D7</text>
+        <text x="572" y="282" class="d-w">сценарии и правила</text>
+        <text x="572" y="302" class="d-w">расчёт денег</text>
+        <text x="572" y="322" class="d-w">изоляция и права</text>
+        <!-- фоновые задачи -->
+        <rect x="556" y="392" width="210" height="108" rx="12" class="d-box"/>
+        <text x="572" y="418" class="d-t">Фоновые задачи</text>
+        <text x="572" y="438" class="d-s">агенты Битрикса · cron</text>
+        <text x="572" y="462" class="d-l">очередь заявок, сверка</text>
+        <text x="572" y="482" class="d-l">оплат, письма</text>
+        <!-- база -->
+        <rect x="812" y="176" width="166" height="98" rx="12" class="d-box"/>
+        <text x="826" y="202" class="d-t">База данных</text>
+        <text x="826" y="222" class="d-s">MySQL коробки</text>
+        <text x="826" y="246" class="d-l">таблицы CRM</text>
+        <text x="826" y="264" class="d-l">+ таблицы модуля</text>
+        <!-- файлы -->
+        <rect x="812" y="296" width="166" height="80" rx="12" class="d-box"/>
+        <text x="826" y="322" class="d-t">Файлы</text>
+        <text x="826" y="342" class="d-s">документы партнёров</text>
+        <text x="826" y="362" class="d-s">закрытое хранение</text>
+        <!-- почта -->
+        <rect x="812" y="404" width="166" height="96" rx="12" class="d-box"/>
+        <text x="826" y="430" class="d-t">Почта</text>
+        <text x="826" y="450" class="d-s">почтовые события</text>
+        <text x="826" y="474" class="d-l">→ SMTP заказчика</text>
+        <!-- связи -->
+        <line x1="206" y1="154" x2="265" y2="136" class="d-edge" marker-end="url(#ar2)"/>
+        <text x="232" y="132" class="d-e" text-anchor="middle">HTTPS</text>
+        <line x1="206" y1="444" x2="265" y2="444" class="d-edge" marker-end="url(#ar2)"/>
+        <text x="236" y="434" class="d-e" text-anchor="middle">HTTPS</text>
+        <path d="M502,150 L528,150 L528,250 L553,250" class="d-edge" marker-end="url(#ar2)"/>
+        <path d="M502,420 L528,420 L528,300 L553,300" class="d-edge" marker-end="url(#ar2)"/>
+        <line x1="661" y1="203" x2="661" y2="163" class="d-edge" marker-start="url(#ar2)" marker-end="url(#ar2)"/>
+        <text x="672" y="188" class="d-e">ORM, Factory, события</text>
+        <line x1="768" y1="252" x2="809" y2="238" class="d-edge" marker-end="url(#ar2)"/>
+        <path d="M768,108 L895,108 L895,173" class="d-edge" marker-end="url(#ar2)"/>
+        <line x1="768" y1="312" x2="809" y2="330" class="d-edge" marker-end="url(#ar2)"/>
+        <line x1="661" y1="390" x2="661" y2="345" class="d-edge" marker-end="url(#ar2)"/>
+        <text x="672" y="372" class="d-e">по расписанию</text>
+        <line x1="768" y1="452" x2="809" y2="452" class="d-edge" marker-end="url(#ar2)"/>
+      </svg>
+    </div>
+    <p class="dg-note">«Контейнер» в модели C4 — всё, что запускается отдельно: приложение в браузере, обработчик запросов, база.
+      Node на сервере заказчика не нужен: кабинет собирается у разработчика и кладётся в модуль готовыми файлами.
+      На домене кабинета модуль пропускает только кабинет, остальной портал там отвечает 404 (шаг 2).</p>
+  </section>
+
+  <!-- ===== 3. Компоненты ===== -->
+  <section id="comp" aria-labelledby="comp-h">
+    <h2 id="comp-h"><span class="lvl">C4 · 3</span>Компоненты ядра и их связи</h2>
+    <p>Ядро разложено по слоям. <b>Нажмите на любой компонент</b> — справа появится, что он делает, по какому пункту ТЗ
+      и от чего зависит. Подсветка: <b style="color:var(--ok-ink)">зелёным</b> — от чего зависит выбранный,
+      <b style="color:var(--warn-ink)">оранжевым</b> — кто использует его.</p>
+    <div class="cx-legend">
+      <span><i class="sw" style="background:var(--ok);border-color:var(--ok)"></i> устройство решено</span>
+      <span><i class="sw" style="background:var(--accent);border-color:var(--accent)"></i> решено частично</span>
+      <span><i class="sw" style="background:var(--warn);border-color:var(--warn)"></i> ждёт решений</span>
+      <span class="muted">· статус — про решение, как устроено; кода ещё нет</span>
+    </div>
+    <div class="cx" id="cx">
+      <div id="cx-layers"></div>
+      <aside class="cx-panel" id="cx-panel" aria-live="polite"></aside>
+    </div>
+    <div class="grid g2" style="margin-top:16px">
+      <div class="rule">
+        <p><b>Правило зависимостей.</b> Стрелки идут только сверху вниз. Слой Domain не знает о Битриксе вообще, а с CRM
+          общаются только адаптеры.</p>
+        <p style="margin:0">Зачем: расчёт денег тестируется без портала (приёмка «30 сделок»), а в этапе 2 под облако
+          меняются только адаптеры — Domain, сценарии и фронт остаются.</p>
+      </div>
+      <div class="card">
+        <h3>Точки расширения</h3>
+        <p class="small muted">Через них клиент или мы дорабатываем поведение без правки кода модуля, обновления их не затирают.</p>
+        <ul class="small" style="margin:0">
+          <li>события модуля: до и после передачи клиента, начисления, смены статуса партнёра;</li>
+          <li>свои условия в правилах ставок (площадь, рассрочка, уровень…);</li>
+          <li>свой источник участков и свой источник оплат;</li>
+          <li>свой формат выгрузки реестра (1С, банк);</li>
+          <li>шаблоны компонентов портала в <code>/local/</code>;</li>
+          <li>свой CSS кабинета, цвет и логотип;</li>
+          <li>канал доставки кода: e-mail сейчас, SMS или мессенджер потом.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 4. Данные ===== -->
+  <section id="data" aria-labelledby="data-h">
+    <h2 id="data-h">Данные: где что хранится</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>Данные</th><th>Где</th><th>Почему</th><th>Статус</th></tr></thead>
+      <tbody>
+        <tr><td><b>Партнёры</b></td><td>Смарт-процесс «Партнёры» в CRM</td><td>Свои стадии, роботы, права только отдела; штатная связь со сделками</td><td><span class="st st-done">Решено</span> <span class="small muted">В8</span></td></tr>
+        <tr><td><b>Реквизиты партнёров</b></td><td>Открыто; рекомендация — поля смарт-процесса</td><td>Видят только отдел и бухгалтерия; без лишнего контакта</td><td><span class="st st-us">Решаем мы</span> <span class="small muted">В7</span></td></tr>
+        <tr><td><b>Вход:</b> e-mail, коды, сессии, устройства, согласия</td><td>Таблицы модуля</td><td>Секреты не лежат в полях, которые видят сотрудники; быстрая проверка на каждом запросе</td><td><span class="st st-done">Решено</span></td></tr>
+        <tr><td><b>Клиент и сделка</b></td><td>CRM: контакт или компания, сделка в «Агентах»</td><td>CRM — единственный источник правды (ТЗ п. 10)</td><td><span class="st st-done">Решено</span> <span class="st st-client">воронка — Г1</span></td></tr>
+        <tr><td><b>Данные передачи</b> (как передал партнёр)</td><td>Таблица модуля</td><td>Партнёр видит свой телефон клиента, а не данные контакта CRM (Ж2)</td><td><span class="st st-done">Решено</span></td></tr>
+        <tr><td><b>ID передачи</b> — защита от повтора</td><td>Таблица модуля (уникальный) + сделка</td><td>Повторная отправка формы или повтор из очереди не создают вторую сделку (<a href="4-practices.html#key">Практики</a>)</td><td><span class="st st-us">Предложено</span></td></tr>
+        <tr><td><b>Закрепление и очередь заявок</b></td><td>Таблицы модуля</td><td>Первый передавший побеждает; заявка ждёт, если CRM не ответила</td><td><span class="st st-done">Решено</span></td></tr>
+        <tr><td><b>Правила ставок</b>, сетки, история</td><td>Таблицы модуля</td><td>Версии: смена правила не трогает начисленное</td><td><span class="st st-done">Решено</span> <span class="st st-client">схема — Е2</span></td></tr>
+        <tr><td><b>Ставка, зафиксированная по сделке</b></td><td>Таблица модуля + поле сделки</td><td>Фиксация при первой оплате (п. 8.1)</td><td><span class="st st-done">Решено</span></td></tr>
+        <tr><td><b>Оплаты клиента</b></td><td>CRM: счета в статусе «Оплачен» — предположение</td><td>Источник оплат спрятан за интерфейсом, заменяется без переделки</td><td><span class="st st-client">Ждём заказчика</span> <span class="small muted">Д1</span></td></tr>
+        <tr><td><b>Начисления и выплаты</b></td><td>Рекомендация: таблицы модуля, записи только добавляются</td><td>Целостность денег, копейки, защита от двойного начисления</td><td><span class="st st-client">Ждём заказчика</span> <span class="small muted">Д3</span></td></tr>
+        <tr><td><b>Поля в сделке для всех</b></td><td>CRM: партнёр, закреплён до, клиент из базы, статус — без сумм</td><td>Поля карточки видит любой с доступом к сделке; суммы — только во вкладке по правам (В4)</td><td><span class="st st-done">Решено</span></td></tr>
+        <tr><td><b>Участки и посёлки</b></td><td>Настройка: «Ручной ввод» (у заказчика) или смарт-процесс участков</td><td>Универсальность продукта (Л5)</td><td><span class="st st-done">Решено</span></td></tr>
+        <tr><td><b>Документы</b></td><td>Закрытое хранилище модуля</td><td>Договоры с ПДн не должны открываться по прямой ссылке (Л3)</td><td><span class="st st-done">Решено</span></td></tr>
+        <tr><td><b>Справочники:</b> стадии → этапы, причины, посёлки в программе, пороги</td><td>Таблицы и настройки модуля</td><td>Правит администратор без программиста (п. 7)</td><td><span class="st st-done">Решено</span></td></tr>
+        <tr><td><b>Тексты:</b> юридические, письма</td><td>Настройки модуля с версиями; почтовые шаблоны Битрикса</td><td>Меняются без кода; при существенной правке — новое согласие</td><td><span class="st st-done">Решено</span> <span class="st st-client">тексты — З2</span></td></tr>
+        <tr><td><b>Журнал, роли и права</b></td><td>Таблицы модуля; права — на <code>\Bitrix\Main\Access</code></td><td>Журнал действий; матрица ролей как в «CRM → Права доступа»</td><td><span class="st st-done">Решено</span></td></tr>
+      </tbody>
+    </table></div>
+    <div class="card" style="margin-top:16px">
+      <h3>Таблицы модуля — черновик групп</h3>
+      <div class="grid g3 small">
+        <div><b>Вход</b><br>учётные данные партнёра · коды входа · сессии и устройства · согласия</div>
+        <div><b>Клиенты</b><br>передачи · закрепления · очередь заявок · сообщения партнёров</div>
+        <div><b>Деньги</b><br>сетки ставок · правила (версии) · ставка по сделке · начисления · выплаты <span class="muted">(если Д3 = А)</span></div>
+        <div><b>Справочники</b><br>стадии → этапы · причины · посёлки в программе · тексты с версиями</div>
+        <div><b>Сервис</b><br>документы · очередь уведомлений · журнал · роли и права</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 5. Сценарии ===== -->
+  <section id="flows" aria-labelledby="flows-h">
+    <h2 id="flows-h">Ключевые сценарии: как части работают вместе</h2>
+    <p class="small muted">Метки: <span class="who w-p">партнёр</span><span class="who w-k">кабинет</span><span class="who w-m">модуль</span><span class="who w-c">CRM</span><span class="who w-s">сотрудник</span></p>
+    <div class="flows">
+      <div class="card">
+        <h3>1. Вход партнёра</h3>
+        <ol class="flow">
+          <li><span class="who w-p">партнёр</span>Вводит e-mail на странице входа.</li>
+          <li><span class="who w-m">модуль</span>Отвечает всегда одинаково: «если вы зарегистрированы, код отправлен» — базу партнёров перебором не узнать.</li>
+          <li><span class="who w-m">модуль</span>Создаёт 6-значный код, хранит его хешем; письмо уходит через очередь.</li>
+          <li><span class="who w-p">партнёр</span>Вводит код: 10 минут, 5 попыток.</li>
+          <li><span class="who w-m">модуль</span>Создаёт сессию: cookie <code>HttpOnly</code>, <code>Secure</code>, <code>SameSite</code> только на поддомене кабинета.</li>
+          <li><span class="who w-k">кабинет</span>При первом входе — «Условия и согласие» (две галочки), потом главная.</li>
+        </ol>
+        <p class="flow-note">Блокировка партнёра или смена e-mail сразу закрывают все его сеансы. Статус проверяется на каждом запросе.</p>
+      </div>
+      <div class="card">
+        <h3>2. Передача клиента</h3>
+        <ol class="flow">
+          <li><span class="who w-p">партнёр</span>Заполняет форму; обязательные поля зависят от способа передачи.</li>
+          <li><span class="who w-k">кабинет</span><span class="st st-us">предложено</span> При открытии формы создаёт ID передачи и отправляет его с данными. Повторная отправка с тем же ID вернёт прежний результат.</li>
+          <li><span class="who w-m">модуль</span>Проверяет дубль по телефону и e-mail (лимит 20 в сутки, запись в журнал) → предупреждение без чужих данных.</li>
+          <li><span class="who w-m">модуль</span>Сохраняет данные передачи и закрепление; срок считается от момента отправки.</li>
+          <li><span class="who w-c">CRM</span>Модуль штатными операциями создаёт контакт (или берёт найденный) и сделку в «Агентах» на стадии по способу — срабатывают роботы воронки.</li>
+          <li><span class="who w-m">модуль</span>Если CRM не ответила — заявка ждёт в очереди, агент дошлёт. <span class="st st-us">предложено</span> Перед повтором проверяет, нет ли уже сделки с этим ID передачи.</li>
+          <li><span class="who w-s">сотрудник</span>Менеджер получает уведомление; у «клиента из базы» — отметка и ссылки на найденные записи.</li>
+        </ol>
+        <p class="flow-note">Шаги с меткой «предложено» — находка 2026-10-21 по практике Amazon, в разбор ещё не внесены как решение
+          (<a href="4-practices.html#key">Практики</a>).</p>
+      </div>
+      <div class="card">
+        <h3>3. Сделка движется</h3>
+        <ol class="flow">
+          <li><span class="who w-s">сотрудник</span>Менеджер ведёт сделку по стадиям в CRM, как обычно.</li>
+          <li><span class="who w-k">кабинет</span>При открытии читает сделку и историю стадий из CRM напрямую. Копии данных нет, поэтому требование «не хуже 5 минут» выполняется с запасом.</li>
+          <li><span class="who w-m">модуль</span>Событие смены стадии → по сопоставлению это новый этап партнёра → письмо партнёру, если событие не выключено.</li>
+          <li><span class="who w-p">партнёр</span>Видит этап и историю с датами; при провале — причину понятными словами.</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h3>4. Оплата → начисление</h3>
+        <ol class="flow">
+          <li><span class="who w-c">CRM</span>Счёт по сделке переходит в «Оплачен» — как именно, уточняем у заказчика (Д1).</li>
+          <li><span class="who w-m">модуль</span>Ловит событие; агент раз в 5 минут сверяет пропущенное.</li>
+          <li><span class="who w-m">модуль</span>При первой оплате выбирает правило и фиксирует ставку в сделке.</li>
+          <li><span class="who w-m">модуль</span>Пишет строку: ставка × оплата, до копейки. ID оплаты уникален — повтор события не создаст второе начисление.</li>
+          <li><span class="who w-p">партнёр</span>Письмо «начислено» (каждое или сводкой — настройка); в кабинете — «Начислено» с формулой.</li>
+        </ol>
+        <p class="flow-note">Оплата отменена до выплаты — сторно. После выплаты — решаем позже (Д4).</p>
+      </div>
+      <div class="card">
+        <h3>5. Выплата</h3>
+        <ol class="flow">
+          <li><span class="who w-s">сотрудник</span>Менеджер по партнёрам подтверждает начисления → «К выплате».</li>
+          <li><span class="who w-s">сотрудник</span>Бухгалтерия в день выплаты (по умолчанию 15-е) формирует реестр за период и выгружает .xlsx.</li>
+          <li><span class="who w-s">сотрудник</span>Платит в своём банке и отмечает «Выплачено» с датой и способом.</li>
+          <li><span class="who w-p">партнёр</span>Видит выплату в истории по месяцам; акт — по решению Л2.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 6. Внешние зависимости ===== -->
+  <section id="deps" aria-labelledby="deps-h">
+    <h2 id="deps-h">Внешние зависимости</h2>
+    <p class="small muted">От чего зависит работа модуля, что может сломаться и как защищаемся.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Зависимость</th><th>Зачем</th><th>Риск</th><th>Защита</th></tr></thead>
+      <tbody>
+        <tr><td><b>Коробка Битрикс24</b> со смарт-процессами и <code>Service\Container</code></td><td>Всё: CRM, ORM, события</td><td>Старая версия или истёкшая лицензия у клиента</td><td>Установщик проверяет версии PHP и crm и не ставится на старую (Т1)</td></tr>
+        <tr><td><b>BitrixVM</b>, nginx</td><td>Поддомен кабинета</td><td>Окружение затирает свои настройки nginx при обновлении</td><td>Фильтр «наружу только кабинет» — в модуле по хосту, не в nginx</td></tr>
+        <tr><td><b>Агенты на cron</b></td><td>Очередь заявок, сверка оплат, письма</td><td>Без cron фоновые задачи стоят ночью</td><td>Страница «Проверка» (Т7)</td></tr>
+        <tr><td><b>Почта:</b> SMTP заказчика, SPF, DKIM, DMARC</td><td>Коды входа и уведомления</td><td>Письма в спаме = партнёр не войдёт: e-mail — единственный вход</td><td>«Проверка» с тестовым письмом; условие запуска (Б7, Т6)</td></tr>
+        <tr><td><b>DNS и сертификат</b> поддомена</td><td>Доступ партнёров</td><td>Нет записи или сертификата — кабинет не открывается</td><td>Инструкция; сертификат через меню BitrixVM (Т2, Т3)</td></tr>
+        <tr><td><b>Воронка «Агенты»</b> с автоматизациями счетов и оплат</td><td>Этапы 4–10 и начисления</td><td>Без неё партнёр видит только этапы 1–3, денег нет</td><td>Мастер создаёт воронку по шаблону; автоматизации — Г1★</td></tr>
+        <tr><td><b>Счета «Оплачен»</b> в Битрикс24</td><td>Источник оплат</td><td>Оплаты отмечаются только в 1С</td><td>Источник за интерфейсом; ручная отметка или обмен с 1С (Д1★)</td></tr>
+        <tr><td><b>ui.accessrights</b></td><td>Матрица прав</td><td>Внутренний API Битрикса, может поменяться</td><td>Проверка после крупных обновлений; запасной вариант на <code>main.ui.grid</code></td></tr>
+        <tr><td><b>Yandex SmartCaptcha</b></td><td>Анкета, защита входа</td><td>Внешний сервис получает IP партнёра</td><td>Российский сервис; упомянуть в политике ПДн (Т8)</td></tr>
+        <tr><td><b>b24ui 2.15</b>, Tailwind 4, TypeScript</td><td>Фронт кабинета, если берём компоненты кита</td><td>Ломающие изменения бывали в минорных версиях</td><td>Версия зафиксирована точно; в модуль кладётся готовая сборка. Вопрос «кит или только стили» открыт</td></tr>
+        <tr><td><b>Node 22</b> (Laragon)</td><td>Только сборка у разработчика</td><td>—</td><td>На сервере заказчика Node не нужен</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+<!-- ===== 8. Папки модуля ===== -->
+  <section id="tree" aria-labelledby="tree-h">
+    <h2 id="tree-h"><span class="lvl">C4 · 4</span>Папки модуля — черновик</h2>
+    <p class="small muted">Обязательные файлы и их роли — по официальной документации Битрикса («Архитектура модулей»).
+      Раскладка внутри <code>lib/</code> — наш черновик под слои выше, утверждается в плане кода.</p>
+<pre class="tree"><span class="h">/local/modules/zk.partners/</span>
+├── install/
+│   ├── index.php           <span class="c">класс zk_partners extends CModule: DoInstall / DoUninstall, проверка версий</span>
+│   ├── version.php         <span class="c">$arModuleVersion: VERSION, VERSION_DATE</span>
+│   ├── db/                 <span class="c">SQL установки и удаления, если что-то не через ORM</span>
+│   ├── components/         <span class="c">компоненты раздела «Партнёры» и вкладок</span>
+│   └── public/             <span class="c">точка входа кабинета /partner/ и раздел /partners/</span>
+├── lib/                    <span class="c">классы D7, пространство имён Zk\Partners</span>
+│   ├── Domain/             <span class="c">чистый PHP: ставки, деньги, начисления, этапы, телефон</span>
+│   ├── Service/            <span class="c">сценарии: вход, передача, начисления, выплаты…</span>
+│   ├── Api/                <span class="c">контроллеры JSON API кабинета</span>
+│   ├── Crm/                <span class="c">CrmGateway и его реализация на ORM коробки</span>
+│   ├── Orm/                <span class="c">таблицы модуля (DataManager)</span>
+│   ├── Access/             <span class="c">права: \Bitrix\Main\Access</span>
+│   ├── Event/              <span class="c">обработчики событий CRM</span>
+│   ├── Agent/              <span class="c">агенты: очередь, сверка оплат, письма</span>
+│   └── Install/            <span class="c">мастер настройки и миграции версий</span>
+├── lang/ru/                <span class="c">языковые файлы</span>
+├── assets/partner/         <span class="c">готовая сборка кабинета; при установке → /partner/assets</span>
+├── .settings.php           <span class="c">настройки модуля: контроллеры, сервисы</span>
+├── include.php             <span class="c">подключение основных классов</span>
+├── options.php             <span class="c">страница настроек модуля в админке</span>
+└── default_option.php      <span class="c">значения настроек по умолчанию</span>
+
+<span class="h">В репозитории, но не в поставке:</span>
+├── frontend/               <span class="c">исходники кабинета: Vue 3 + Vite</span>
+├── tests/                  <span class="c">PHPUnit: Domain, 30 сделок приёмки, изоляция «А не видит Б»</span>
+└── docs/api.yaml           <span class="c">контракт API кабинета (OpenAPI)</span></pre>
+  </section>
+
+  <!-- ===== 8. ТЗ → части ===== -->
+  <section id="tz" aria-labelledby="tz-h">
+    <h2 id="tz-h">ТЗ → части системы</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>Раздел ТЗ</th><th>Где в системе</th></tr></thead>
+      <tbody>
+        <tr><td>4. Три способа передачи</td><td>Передача клиента (стартовая стадия по способу) · Правила ставок</td></tr>
+        <tr><td>5. Сценарии</td><td>Партнёры · Передача · Проверка дублей · Закрепление · Начисления и сторно</td></tr>
+        <tr><td>6.1 Вход</td><td>Вход и сессии · Согласия · Капча</td></tr>
+        <tr><td>6.2–6.7 Экраны партнёра</td><td>Кабинет (SPA) · API кабинета · Изоляция данных · Документы · Сообщения менеджеру</td></tr>
+        <tr><td>6.8 Уведомления</td><td>Уведомления · Почта · Колокольчик</td></tr>
+        <tr><td>7. Этапы клиента</td><td>Этапы для партнёра · Стадии → этапы (Domain)</td></tr>
+        <tr><td>8. Вознаграждение</td><td>Правила ставок · Начисления · Выплаты · Domain: выбор правила, расчёт, деньги</td></tr>
+        <tr><td>9. Сотрудники</td><td>Интерфейс сотрудников · Права · Журнал · Вкладка «Партнёр» в сделке</td></tr>
+        <tr><td>10. Ограничения</td><td>Изоляция · закрытые файлы · данные на сервере в РФ · настройки без зашитых ID</td></tr>
+        <tr><td>12. Приёмка</td><td>Тесты Domain на 30 сделках · тесты изоляции · проверка 360 px</td></tr>
+        <tr><td>13. Предложение</td><td>Эта страница — черновик раздела «архитектура» предложения</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="card" aria-labelledby="src-h">
+    <h2 id="src-h">Источники</h2>
+    <ul class="small">
+      <li><a href="https://c4model.com">Модель C4</a> (Саймон Браун) — уровни описания: контекст, контейнеры, компоненты, код.</li>
+      <li><a href="https://docs.arc42.org/home/">arc42</a> — шаблон описания архитектуры: строительные блоки, сценарии, развёртывание.</li>
+      <li><a href="https://docs.1c-bitrix.ru/pages/modules/architecture.html">Битрикс: архитектура модулей</a> — обязательные файлы модуля и их роли.</li>
+      <li><a href="https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43&amp;LESSON_ID=2823">Курс разработчика Битрикс: структура файлов модуля</a>.</li>
+      <li><a href="https://learn.microsoft.com/en-us/training/modules/introduction-to-secure-devops/7-understand-threat-modeling">Microsoft Learn: моделирование угроз STRIDE</a>;
+        <a href="https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/">Amazon: безопасный повтор операций</a>.</li>
+      <li>Решения проекта: РАЗБОР-ПЛАНА.md (раздел «Архитектура этапа 1», шаги 1–11), DECISIONS.md.</li>
+    </ul>
+  </section>
+
+  <footer>Снимок на 21.10.2026 · Кабинет партнёра · карта проекта</footer>
+</main>
+<script>
+(function(){
+  var KEY='zk-map-theme', root=document.documentElement, btn=document.getElementById('themeBtn');
+  var names={auto:'Тема: авто',light:'Тема: светлая',dark:'Тема: тёмная'};
+  function get(){try{return localStorage.getItem(KEY)||'auto'}catch(e){return 'auto'}}
+  function set(v){try{localStorage.setItem(KEY,v)}catch(e){}}
+  function apply(v){if(v==='auto'){root.removeAttribute('data-theme')}else{root.setAttribute('data-theme',v)} if(btn){btn.textContent=names[v]}}
+  var cur=get(); apply(cur);
+  if(btn){btn.addEventListener('click',function(){cur=cur==='auto'?'light':(cur==='light'?'dark':'auto'); set(cur); apply(cur)})}
+})();
+
+/* ===== Компоненты: данные (синхронно с _data/components.md) ===== */
+var LAYERS=[
+  {id:'in',  cls:'l-in',  name:'Входы',       hint:'откуда приходят запросы'},
+  {id:'svc', cls:'l-svc', name:'Сценарии',    hint:'что умеет система'},
+  {id:'dm',  cls:'l-dm',  name:'Domain',      hint:'правила на чистом PHP, без Битрикса'},
+  {id:'ad',  cls:'l-ad',  name:'Адаптеры',    hint:'единственное место связи с Битриксом и внешним миром'},
+  {id:'plat',cls:'l-plat',name:'Платформа Битрикс24', hint:'модули коробки'}
+];
+var ST={done:'Решено',part:'Решено частично',open:'Ждёт решений'};
+var STC={done:'st-done',part:'st-doing',open:'st-client'};
+var N=[
+ {id:'in.api',l:'in',n:'API кабинета',st:'done',tz:'6.1–6.8, 10',step:'7, 8',d:'JSON API /partner/api/v1 для фронта кабинета. Каждый запрос проходит через изоляцию: ID партнёра берётся только из сессии.',deps:['svc.scope','svc.auth','svc.handover','svc.dupes','svc.stages','svc.accruals','svc.payouts','svc.rates','svc.docs','svc.messages','svc.notify','svc.audit']},
+ {id:'in.portal',l:'in',n:'Интерфейс сотрудников',st:'done',tz:'9',step:'10',d:'Раздел /partners/ на таблицах портала, вкладка «Партнёр» в сделке, вкладка «Кабинет» в карточке партнёра, просмотр «глазами партнёра».',deps:['svc.access','svc.partners','svc.rates','svc.accruals','svc.payouts','svc.attach','svc.docs','svc.audit','svc.settings','plat.ui']},
+ {id:'in.events',l:'in',n:'Обработчики событий CRM',st:'done',tz:'5, 6, 8',step:'4, 6, 9',d:'Ловят смену стадии сделки, оплату счёта, изменение карточки партнёра (блокировка) и новую сделку закреплённого клиента (повторная покупка).',deps:['svc.stages','svc.accruals','svc.notify','svc.attach','svc.partners','plat.main']},
+ {id:'in.agents',l:'in',n:'Агенты по расписанию',st:'done',tz:'10',step:'1, 4, 9',d:'Фоновые задачи через cron: досылают заявки из очереди, раз в 5 минут сверяют оплаты, отправляют письма, напоминают бухгалтерии о дне выплаты.',deps:['svc.handover','svc.accruals','svc.notify','svc.payouts','plat.main']},
+ {id:'in.install',l:'in',n:'Установщик, мастер, «Проверка»',st:'done',tz:'10, 12',step:'2',d:'Ставит модуль из портала: проверка версий, таблицы, смарт-процесс, роли. Мастер — воронка, стадии, участки, адрес, почта, тексты. «Проверка» показывает, чего не хватает.',deps:['svc.settings','svc.access','ad.crm','ad.mail','ad.tables']},
+
+ {id:'svc.auth',l:'svc',n:'Вход и сессии',st:'done',tz:'6.1',step:'7',d:'Код на e-mail (10 минут, 5 попыток), одинаковый ответ, сессия 30 дней с продлением, список устройств, мгновенная блокировка.',deps:['ad.delivery','ad.tables','svc.partners','svc.consent','svc.audit','ad.captcha']},
+ {id:'svc.consent',l:'svc',n:'Согласия и юр. тексты',st:'part',why:'тексты ждём от заказчика (З2)',tz:'5, 10',step:'7',d:'Две отдельные галочки — ПДн и условия программы; версии текстов, история согласий; политика доступна без входа.',deps:['ad.tables','svc.settings']},
+ {id:'svc.partners',l:'svc',n:'Партнёры',st:'part',why:'реквизиты — В7',tz:'5, 6.1, 9',step:'3',d:'Анкета с капчей, приглашение при переходе в стадию «Приглашён», блокировка, смена e-mail для входа. Хранятся в смарт-процессе «Партнёры».',deps:['ad.crm','ad.delivery','ad.captcha','svc.audit']},
+ {id:'svc.scope',l:'svc',n:'Изоляция данных',st:'done',tz:'10, приёмка',step:'7, 8',d:'Партнёр видит только своё: ID из сессии, чужое → 404, маска телефона на сервере, комментарии и платежи в ответы не попадают.',deps:['svc.auth','ad.crm','ad.tables','dm.phone']},
+ {id:'svc.handover',l:'svc',n:'Передача клиента',st:'part',why:'воронка Г1, повторная Г6, по звонку Г7; повтор без дублей — предложено',tz:'4, 5, 6.5',step:'6',d:'Контакт (или найденный) и сделка в «Агентах» на стадии по способу; данные передачи; очередь, если CRM не ответила. Предложено: ID передачи, чтобы повтор формы или очереди не создавал вторую сделку.',deps:['svc.scope','svc.dupes','svc.attach','ad.crm','ad.plots','svc.notify','svc.audit','dm.phone']},
+ {id:'svc.dupes',l:'svc',n:'Проверка дублей',st:'done',tz:'5, 8.5',step:'6',d:'По телефону и e-mail; «из базы» — любая сделка за всё время; лимит 20 проверок в сутки, каждая — в журнал.',deps:['ad.crm','dm.phone','svc.audit','svc.settings']},
+ {id:'svc.attach',l:'svc',n:'Закрепление',st:'part',why:'повторная покупка — Е3',tz:'5, 8.5',step:'5, 6',d:'Клиент за первым передавшим, 6 или 12 месяцев от отправки; дата фиксируется; ручное продление по праву; повторная покупка.',deps:['ad.tables','svc.settings','svc.audit']},
+ {id:'svc.stages',l:'svc',n:'Этапы для партнёра',st:'done',tz:'7',step:'6',d:'Стадии CRM превращаются в 10 понятных этапов, причины провала — в понятный текст; история с датами.',deps:['dm.stages','ad.crm','svc.settings']},
+ {id:'svc.rates',l:'svc',n:'Правила ставок',st:'open',why:'схема выбора — Е2, повторная — Е3',tz:'8.2, 9',step:'5',d:'Сетка с датой начала, акции, индивидуальные ставки; история версий; свои условия через точку расширения; экран «Проверить ставку».',deps:['dm.rates','ad.tables','svc.audit']},
+ {id:'svc.accruals',l:'svc',n:'Начисления',st:'open',why:'источник оплат Д1, хранение Д3, база Д9',tz:'8.1, 8.3, 8.4',step:'4',d:'По каждой оплате: фиксация ставки при первой, строка начисления в копейках, сторно, подтверждение, корректировки, бонусы и удержания.',deps:['dm.accrual','dm.rates','svc.rates','svc.attach','ad.payments','ad.tables','svc.notify','svc.audit']},
+ {id:'svc.payouts',l:'svc',n:'Выплаты',st:'part',why:'акт при выплате — Л2',tz:'6.6, 9',step:'4, 10',d:'Раз в месяц (день — настройка), реестр за период, выгрузка .xlsx, отметка «Выплачено» с датой и способом.',deps:['svc.accruals','ad.tables','ad.files','svc.notify','svc.audit']},
+ {id:'svc.notify',l:'svc',n:'Уведомления',st:'done',tz:'6.8',step:'9',d:'Письма партнёру по событиям, каждое можно выключить; колокольчик сотрудникам. Через очередь: одно событие — одно письмо.',deps:['ad.mail','ad.im','ad.tables']},
+ {id:'svc.docs',l:'svc',n:'Документы',st:'done',tz:'6.7',step:'8',d:'Общие и личные файлы, загружает менеджер по партнёрам; скачать можно только через кабинет с проверкой прав.',deps:['ad.files','svc.scope','svc.notify','svc.audit']},
+ {id:'svc.messages',l:'svc',n:'Сообщения менеджеру',st:'done',tz:'6.4, 6.7',step:'9',d:'«Написать менеджеру» → комментарий в таймлайне сделки + уведомление; вопрос менеджеру по партнёрам. Ответа в системе нет (И1).',deps:['svc.scope','ad.crm','ad.im','ad.tables']},
+ {id:'svc.access',l:'svc',n:'Права сотрудников',st:'done',tz:'3, 9',step:'10',d:'Матрица «роли × действия», 5 ролей по умолчанию; проверка на каждой странице и каждом действии.',deps:['ad.access']},
+ {id:'svc.audit',l:'svc',n:'Журнал',st:'done',tz:'9',step:'7, 8, 10',d:'Входы, передачи, проверки дублей, действия с деньгами, выгрузки в Excel, просмотры «глазами партнёра».',deps:['ad.tables']},
+ {id:'svc.settings',l:'svc',n:'Настройки',st:'done',tz:'7, 10',step:'принцип продукта',d:'Всё, что меняется без кода: сроки, лимиты, тексты, сопоставления, режимы; значения по умолчанию.',deps:['ad.tables']},
+
+ {id:'dm.rates',l:'dm',n:'Выбор правила ставки',st:'open',why:'схема — Е2',tz:'8.2',step:'5',d:'Какое правило применить к сделке: индивидуальное, акция, сетка. Набор условий расширяемый — уровень партнёра добавится без переделки.',deps:['dm.money']},
+ {id:'dm.accrual',l:'dm',n:'Расчёт начисления',st:'done',tz:'8.1, 8.3',step:'4, 5',d:'Ставка × оплата, математическое округление до копейки, статусы вознаграждения, сторно.',deps:['dm.money']},
+ {id:'dm.money',l:'dm',n:'Деньги в копейках',st:'done',tz:'8',step:'4',d:'Все суммы — целые копейки, без дробных чисел с плавающей точкой: так суммы совпадут с ручным расчётом.',deps:[]},
+ {id:'dm.stages',l:'dm',n:'Стадии → этапы',st:'done',tz:'7',step:'6',d:'Сопоставление стадий CRM с 10 этапами партнёра и провальных стадий — с текстами причин.',deps:[]},
+ {id:'dm.phone',l:'dm',n:'Телефон',st:'done',tz:'6.3, 10',step:'6, 8',d:'Нормализация номера для поиска дублей и маска для списков.',deps:[]},
+
+ {id:'ad.crm',l:'ad',n:'CrmGateway',st:'done',tz:'10',step:'1, 11',d:'Узкий интерфейс к CRM: сделки партнёра, история стадий, создание передачи, поиск дублей, таймлайн. Сейчас — ORM коробки, в этапе 2 — REST облака.',deps:['plat.crm']},
+ {id:'ad.payments',l:'ad',n:'Источник оплат',st:'open',why:'Д1',tz:'8.1',step:'4',d:'Откуда берутся оплаты. По умолчанию — счета в статусе «Оплачен»; другой источник подключается без переделки.',deps:['plat.crm']},
+ {id:'ad.plots',l:'ad',n:'Источник участков',st:'done',tz:'6.5',step:'8',d:'«Ручной ввод» (у этого заказчика) или «Каталог CRM» (смарт-процесс участков); другие — через точку расширения.',deps:['plat.crm']},
+ {id:'ad.delivery',l:'ad',n:'Канал доставки кода',st:'done',tz:'6.1',step:'7',d:'Как партнёр получает код: сейчас e-mail; позже SMS или мессенджер — без переделки входа.',deps:['ad.mail']},
+ {id:'ad.mail',l:'ad',n:'Почта',st:'done',tz:'6.8',step:'9',d:'Почтовые события Битрикса: шаблоны писем правит администратор без программиста.',deps:['plat.main']},
+ {id:'ad.im',l:'ad',n:'Колокольчик',st:'done',tz:'5, 8.5',step:'9',d:'Уведомления сотрудникам в Битрикс24.',deps:['plat.im']},
+ {id:'ad.files',l:'ad',n:'Закрытое хранилище',st:'done',tz:'6.7',step:'8',d:'Файлы документов вне открытого /upload/; выдача только после проверки прав.',deps:['plat.main']},
+ {id:'ad.tables',l:'ad',n:'Таблицы модуля',st:'part',why:'деньги — Д3',tz:'—',step:'4, 7',d:'ORM-таблицы модуля в базе коробки: вход, передачи, правила, начисления, журнал, настройки.',deps:['plat.main']},
+ {id:'ad.access',l:'ad',n:'Права (Access)',st:'done',tz:'9',step:'10',d:'\\Bitrix\\Main\\Access + матрица ui.accessrights — как «CRM → Права доступа».',deps:['plat.main','plat.ui']},
+ {id:'ad.captcha',l:'ad',n:'Капча',st:'done',tz:'6.1',step:'7',d:'Yandex SmartCaptcha на анкете и после неудачных попыток входа.',deps:[]},
+
+ {id:'plat.crm',l:'plat',n:'crm',st:'done',tz:'—',step:'1',d:'Сделки, контакты, компании, смарт-процессы, счета, история стадий, поиск дублей, таймлайн.',deps:[]},
+ {id:'plat.main',l:'plat',n:'main',st:'done',tz:'—',step:'1',d:'Ядро: ORM, события, агенты, почтовые события, файлы, пользователи, Access.',deps:[]},
+ {id:'plat.im',l:'plat',n:'im',st:'done',tz:'—',step:'9',d:'Уведомления сотрудникам (колокольчик).',deps:[]},
+ {id:'plat.ui',l:'plat',n:'ui',st:'done',tz:'—',step:'10',d:'Таблицы и фильтры портала (main.ui.grid, main.ui.filter), матрица прав (ui.accessrights).',deps:[]}
+];
+var BY={}; N.forEach(function(x){BY[x.id]=x});
+var USED={}; N.forEach(function(x){x.deps.forEach(function(d){(USED[d]=USED[d]||[]).push(x.id)})});
+
+var cx=document.getElementById('cx'), host=document.getElementById('cx-layers'), panel=document.getElementById('cx-panel');
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function chip(id,small){var x=BY[id]; return '<button type="button" class="chip" data-id="'+id+'"><i class="'+x.st+'"></i>'+esc(x.n)+'</button>'}
+LAYERS.forEach(function(L,i){
+  var html='<div class="layer '+L.cls+'"><div class="layer-h">'+esc(L.name)+'<span>'+esc(L.hint)+'</span></div><div class="chips">';
+  N.filter(function(x){return x.l===L.id}).forEach(function(x){html+=chip(x.id)});
+  html+='</div></div>';
+  if(i<LAYERS.length-1){html+='<div class="down" aria-hidden="true">▼ зависит от слоёв ниже</div>'}
+  host.insertAdjacentHTML('beforeend',html);
+});
+function layerName(id){for(var i=0;i<LAYERS.length;i++){if(LAYERS[i].id===id)return LAYERS[i].name}return ''}
+function select(id){
+  var x=BY[id]; if(!x)return;
+  var deps=x.deps, used=USED[id]||[];
+  cx.classList.add('has-sel');
+  host.querySelectorAll('.chip').forEach(function(b){
+    var bid=b.getAttribute('data-id');
+    b.classList.toggle('sel',bid===id);
+    b.classList.toggle('dep',deps.indexOf(bid)>=0);
+    b.classList.toggle('use',used.indexOf(bid)>=0);
+    b.setAttribute('aria-pressed',bid===id?'true':'false');
+  });
+  var h='<div class="lay">'+esc(layerName(x.l))+'</div><h3>'+esc(x.n)+'</h3>'+
+    '<span class="st '+STC[x.st]+'">'+ST[x.st]+'</span>'+(x.why?' <span class="small muted">'+esc(x.why)+'</span>':'')+
+    '<p style="margin-top:10px">'+esc(x.d)+'</p>'+
+    '<dl><dt>ТЗ</dt><dd>'+esc(x.tz)+'</dd><dt>Шаг</dt><dd>'+esc(x.step)+'</dd></dl>';
+  h+='<div class="rel"><b style="color:var(--ok-ink)">Зависит от ('+deps.length+')</b><div class="chips">'+(deps.length?deps.map(function(d){return chip(d)}).join(''):'<span class="small muted">ни от чего — самый нижний уровень</span>')+'</div></div>';
+  h+='<div class="rel"><b style="color:var(--warn-ink)">Используется в ('+used.length+')</b><div class="chips">'+(used.length?used.map(function(d){return chip(d)}).join(''):'<span class="small muted">никем — это вход в систему</span>')+'</div></div>';
+  h+='<p class="small muted" style="margin:12px 0 0"><a href="#" id="cx-reset">Сбросить выделение</a></p>';
+  panel.innerHTML=h;
+}
+function reset(){
+  cx.classList.remove('has-sel');
+  host.querySelectorAll('.chip').forEach(function(b){b.classList.remove('sel','dep','use');b.setAttribute('aria-pressed','false')});
+  panel.innerHTML='<h3>Выберите компонент</h3><p class="small">Нажмите на любой прямоугольник слева. Например, «Начисления» — сердце расчёта денег: от него зависит больше всего ожиданий заказчика.</p>';
+}
+cx.addEventListener('click',function(e){
+  var b=e.target.closest('.chip'); if(b){select(b.getAttribute('data-id'));return}
+  if(e.target.id==='cx-reset'){e.preventDefault();reset()}
+});
+select('svc.accruals');
+</script>
+</body>
+</html>

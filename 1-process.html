@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Как разрабатывают приложения</title>
+<meta name="description" content="Стадии заказной разработки по стандартам и практике, и как по ним идёт проект «Кабинет партнёра».">
+<style>
+/* ===== Токены Bitrix24 Air (как в prototypes/index.html) ===== */
+:root{
+  --app:#EEF2F4; --card:#FFFFFF; --card-2:#F8FAFB; --ink:#333333; --ink-2:#525C69; --muted:#828B95; --dim:#A8ADB4;
+  --line:#EDEEF0; --line-2:#DFE0E3; --accent:#0075FF; --accent-weak:#E6F4FF; --sel:#EDF7FF; --link:#0154C8; --on-accent:#FFFFFF;
+  --ok:#24B547; --ok-weak:#CAFFE7; --ok-ink:#0B7A2B;
+  --warn:#E88C02; --warn-weak:#FFF4D6; --warn-ink:#8F5300;
+  --bad:#FF5752; --bad-weak:#FFE8E8; --bad-ink:#B8231E;
+  --info-ink:#0154C8; --na-weak:#EDEEF0; --na-ink:#5C6670;
+  --violet-weak:#F1E9FF; --violet-ink:#6A2FC2;
+  --shadow-s:0 2px 4px 0 rgba(0,0,0,.08);
+  --font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,Menlo,monospace;
+  --r-sm:8px; --r-md:10px; --r-lg:12px; --r-xl:16px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --app:#171717; --card:#262626; --card-2:#1F1F1F; --ink:#F8F8F8; --ink-2:#CACBCC; --muted:#A7A9AB; --dim:#828385;
+    --line:#373838; --line-2:#555657; --accent:#1587FA; --accent-weak:#062040; --sel:#1F3048; --link:#6AA6F5;
+    --ok:#22AC43; --ok-weak:#052717; --ok-ink:#6BD785; --warn:#E0911D; --warn-weak:#302000; --warn-ink:#F3B24F;
+    --bad:#F2473D; --bad-weak:#300E0C; --bad-ink:#FF8A84; --info-ink:#7AB1FF; --na-weak:#373838; --na-ink:#B5B7B9;
+    --violet-weak:#2A1748; --violet-ink:#C4A3FF; --shadow-s:0 2px 4px 0 rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --app:#171717; --card:#262626; --card-2:#1F1F1F; --ink:#F8F8F8; --ink-2:#CACBCC; --muted:#A7A9AB; --dim:#828385;
+  --line:#373838; --line-2:#555657; --accent:#1587FA; --accent-weak:#062040; --sel:#1F3048; --link:#6AA6F5;
+  --ok:#22AC43; --ok-weak:#052717; --ok-ink:#6BD785; --warn:#E0911D; --warn-weak:#302000; --warn-ink:#F3B24F;
+  --bad:#F2473D; --bad-weak:#300E0C; --bad-ink:#FF8A84; --info-ink:#7AB1FF; --na-weak:#373838; --na-ink:#B5B7B9;
+  --violet-weak:#2A1748; --violet-ink:#C4A3FF; --shadow-s:0 2px 4px 0 rgba(0,0,0,.4);
+}
+/* ===== База ===== */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:72px}
+body{margin:0;background:var(--app);color:var(--ink);font:15px/1.55 var(--font)}
+a{color:var(--link);text-decoration:none} a:hover{text-decoration:underline}
+code{font-family:var(--mono);font-size:.9em;background:var(--card-2);border:1px solid var(--line);border-radius:6px;padding:0 4px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+header.top{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:12px 16px;min-height:56px;flex-wrap:wrap;padding-top:6px;padding-bottom:6px}
+.brand{font-weight:700;color:var(--ink);line-height:1.2}
+.brand small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+nav.tabs{display:flex;gap:2px;flex-wrap:wrap;flex:1}
+nav.tabs a{padding:7px 11px;border-radius:var(--r-md);color:var(--ink-2);font-weight:500;font-size:14px}
+nav.tabs a:hover{background:var(--card-2);text-decoration:none}
+nav.tabs a[aria-current="page"]{background:var(--accent-weak);color:var(--link)}
+.theme-btn{border:1px solid var(--line-2);background:var(--card);color:var(--ink-2);border-radius:var(--r-md);padding:6px 10px;font:inherit;font-size:13px;cursor:pointer}
+.hero{padding:32px 0 4px}
+.hero h1{font-size:30px;line-height:1.2;margin:0 0 10px;letter-spacing:-.01em}
+.lead{font-size:17px;color:var(--ink-2);max-width:800px;margin:0}
+.meta{margin-top:12px;color:var(--muted);font-size:13px}
+section{margin:30px 0}
+h2{font-size:22px;line-height:1.3;margin:0 0 12px}
+h3{font-size:17px;line-height:1.35;margin:0 0 8px}
+h4{font-size:14px;margin:0 0 6px;color:var(--ink-2);text-transform:uppercase;letter-spacing:.04em}
+p{margin:0 0 10px}
+ul,ol{margin:0 0 10px;padding-left:22px} li{margin:3px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-xl);padding:20px 22px;box-shadow:var(--shadow-s)}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.muted{color:var(--muted)} .small{font-size:13px}
+.st{display:inline-flex;align-items:center;gap:6px;padding:1px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;line-height:20px;vertical-align:middle}
+.st::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.st-done{background:var(--ok-weak);color:var(--ok-ink)}
+.st-doing{background:var(--accent-weak);color:var(--info-ink)}
+.st-client{background:var(--warn-weak);color:var(--warn-ink)}
+.st-us{background:var(--bad-weak);color:var(--bad-ink)}
+.st-future{background:var(--na-weak);color:var(--na-ink)}
+.st-idea{background:var(--violet-weak);color:var(--violet-ink)}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--card)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{background:var(--card-2);color:var(--ink-2);font-weight:600;font-size:13px}
+tr:last-child td{border-bottom:0}
+footer{margin:40px 0 32px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:16px}
+@media (max-width:600px){.hero h1{font-size:24px}.lead{font-size:16px}.card{padding:16px}}
+/* ===== Страница ===== */
+.strip{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.strip a{display:block;background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:10px 12px;color:var(--ink);position:relative;overflow:hidden}
+.strip a:hover{text-decoration:none;border-color:var(--accent)}
+.strip a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--line-2)}
+.strip a.done::after{background:var(--ok)} .strip a.doing::after{background:var(--accent)}
+.strip a .n{font-size:12px;color:var(--muted);font-weight:600}
+.strip a .t{display:block;font-weight:600;font-size:14px;line-height:1.3;margin-top:2px}
+.strip a.here{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-weak)}
+.here-tag{display:inline-block;margin-top:6px;font-size:11px;font-weight:700;color:var(--on-accent);background:var(--accent);border-radius:999px;padding:0 8px}
+.models .card h3{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ours-model{border:2px solid var(--accent)}
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;margin:8px 0 10px}
+.flow span{background:var(--card-2);border:1px solid var(--line);border-radius:8px;padding:2px 8px}
+.flow i{color:var(--dim);font-style:normal}
+.flow .loop{background:var(--accent-weak);border-color:transparent;color:var(--link);font-weight:600}
+/* конус неопределённости */
+.cone{display:grid;gap:8px}
+.cone-row{display:grid;grid-template-columns:minmax(120px,220px) 1fr;gap:12px;align-items:center}
+.cone-row .lbl{font-size:13px;color:var(--ink-2)}
+.cone-row .bar{position:relative;height:22px;background:var(--card-2);border:1px solid var(--line);border-radius:6px}
+.cone-row .bar i{position:absolute;top:3px;bottom:3px;background:var(--accent);opacity:.8;border-radius:4px}
+.cone-row .bar b{position:absolute;top:0;bottom:0;width:2px;left:50%;background:var(--ink);opacity:.35}
+.cone-row .bar em{position:absolute;right:4px;top:1px;font-style:normal;font-size:12px;color:var(--ink-2);font-weight:600;background:var(--card);border-radius:4px;padding:0 4px;line-height:18px}
+.cone-row .bar em:empty{display:none}
+.cone-row.here .lbl{color:var(--link);font-weight:700}
+.cone-row.here .bar{border-color:var(--accent)}
+.cone-scale{display:grid;grid-template-columns:minmax(120px,220px) 1fr;gap:12px;font-size:12px;color:var(--muted)}
+.cone-scale div:last-child{display:flex;justify-content:space-between}
+@media (max-width:600px){.cone-row,.cone-scale{grid-template-columns:1fr;gap:4px}.cone-scale div:first-child{display:none}}
+/* стадии */
+details.stage{background:var(--card);border:1px solid var(--line);border-radius:var(--r-xl);box-shadow:var(--shadow-s);margin:10px 0}
+details.stage[open]{border-color:var(--line-2)}
+details.stage>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;padding:14px 18px}
+details.stage>summary::-webkit-details-marker{display:none}
+details.stage>summary .num{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:700;background:var(--card-2);border:1px solid var(--line-2)}
+details.stage.done>summary .num{background:var(--ok-weak);color:var(--ok-ink);border-color:transparent}
+details.stage.doing>summary .num{background:var(--accent);color:var(--on-accent);border-color:transparent}
+details.stage>summary .tt{font-weight:700;font-size:17px;line-height:1.3}
+details.stage>summary .ds{display:block;font-weight:400;color:var(--muted);font-size:13px;margin-top:2px}
+details.stage>summary .chev{color:var(--dim);font-size:13px;margin-left:8px;transition:transform .15s;display:inline-block}
+details.stage[open]>summary .chev{transform:rotate(90deg)}
+.stage-body{padding:0 18px 18px 70px}
+.stage-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px 24px}
+.ours{margin-top:12px;background:var(--sel);border-left:4px solid var(--accent);border-radius:var(--r-md);padding:12px 14px}
+.ours h4{color:var(--link)}
+.gate{background:var(--card-2);border:1px dashed var(--line-2);border-radius:var(--r-md);padding:8px 12px;font-size:14px}
+@media (max-width:600px){.stage-body{padding:0 14px 14px}details.stage>summary{grid-template-columns:36px 1fr;padding:12px 14px}details.stage>summary .right{grid-column:2}}
+.check{list-style:none;padding:0}
+.check li{padding-left:26px;position:relative;margin:7px 0}
+.check li::before{position:absolute;left:0;top:0;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700}
+.check.good li::before{content:"✓";background:var(--ok-weak);color:var(--ok-ink)}
+.check.gap li::before{content:"!";background:var(--warn-weak);color:var(--warn-ink)}
+.prio{font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap}
+.src li{margin:6px 0}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="brand">Кабинет партнёра<small>карта проекта</small></div>
+  <nav class="tabs" aria-label="Разделы">
+    <a href="index.html">Обзор</a>
+    <a href="1-process.html" aria-current="page">Как разрабатывают</a>
+    <a href="2-roadmap.html">Дорожная карта</a>
+    <a href="3-structure.html">Структура</a>
+    <a href="4-practices.html">Практики</a>
+  </nav>
+  <button class="theme-btn" id="themeBtn" type="button">Тема: авто</button>
+</div></header>
+
+<main class="wrap">
+  <div class="hero">
+    <h1>Как разрабатывают приложения — и как идём мы</h1>
+    <p class="lead">Из каких стадий состоит заказная разработка, что получается на выходе каждой и когда можно переходить дальше.
+      Рядом с каждой стадией — что у нас уже сделано и что впереди.</p>
+    <p class="meta">Опора: стандарты ISO/IEC/IEEE 12207 и ГОСТ 34.601, свод знаний SWEBOK v4, Scrum Guide, книги Вигерса и Макконнелла,
+      документация Битрикса. Список — внизу страницы. Снимок на 21.10.2026.</p>
+  </div>
+
+  <section class="card" aria-labelledby="short-h">
+    <h2 id="short-h">Коротко</h2>
+    <ol>
+      <li><b>Стадии везде одни и те же:</b> понять задачу → решить, как делать → договориться → сделать → проверить → внедрить
+        → сопровождать. Так их перечисляют и международный стандарт процессов ПО (ISO/IEC/IEEE 12207), и российский
+        ГОСТ 34.601, и учебный свод SWEBOK.</li>
+      <li><b>Методы отличаются не набором стадий, а тем, как часто по ним проходят:</b> один раз подряд («водопад») или много
+        коротких кругов («итерации», Scrum).</li>
+      <li><b>Мы идём гибридом.</b> Требования, предложение и договор проходим крупно и один раз: заказчику нужны состав работ
+        и цена. Разработку ведём короткими кругами, каждый заканчивается показом.</li>
+      <li><b>Сейчас мы в конце стадии 2 «Требования».</b> Параллельно частично сделаны архитектура (3) и прототип (4).
+        Следующий рубеж — стадия 5 «Предложение и договор».</li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="map-h">
+    <h2 id="map-h">11 стадий одним взглядом</h2>
+    <p class="small muted">Полоса снизу: зелёная — готово, синяя — идёт, серая — впереди. Нажмите на стадию, чтобы перейти к описанию.</p>
+    <nav class="strip" aria-label="Стадии">
+      <a class="done" href="#s1"><span class="n">1</span><span class="t">Инициация</span></a>
+      <a class="doing here" href="#s2"><span class="n">2</span><span class="t">Требования</span><span class="here-tag">мы здесь</span></a>
+      <a class="doing" href="#s3"><span class="n">3</span><span class="t">Архитектура</span></a>
+      <a class="doing" href="#s4"><span class="n">4</span><span class="t">Прототип</span></a>
+      <a href="#s5"><span class="n">5</span><span class="t">Предложение и договор</span></a>
+      <a href="#s6"><span class="n">6</span><span class="t">Технический проект</span></a>
+      <a href="#s7"><span class="n">7</span><span class="t">Окружение</span></a>
+      <a href="#s8"><span class="n">8</span><span class="t">Разработка</span></a>
+      <a href="#s9"><span class="n">9</span><span class="t">Тесты и приёмка</span></a>
+      <a href="#s10"><span class="n">10</span><span class="t">Внедрение и запуск</span></a>
+      <a href="#s11"><span class="n">11</span><span class="t">Сопровождение и развитие</span></a>
+    </nav>
+  </section>
+
+  <section class="models" aria-labelledby="models-h">
+    <h2 id="models-h">Три способа пройти стадии</h2>
+    <div class="grid g3">
+      <div class="card">
+        <h3>Водопад</h3>
+        <div class="flow"><span>ТЗ</span><i>→</i><span>проект</span><i>→</i><span>код</span><i>→</i><span>тесты</span><i>→</i><span>ввод</span></div>
+        <p class="small">Стадии идут по очереди, каждая заканчивается документом. Так устроен ГОСТ 34.601: требования, концепция, ТЗ,
+          эскизный и технический проект, рабочая документация, ввод в действие, сопровождение.</p>
+        <p class="small"><b>Плюс:</b> цена и сроки известны заранее. <b>Минус:</b> ошибки в понимании задачи всплывают в конце,
+          когда исправлять дороже всего.</p>
+      </div>
+      <div class="card">
+        <h3>Итерации (Scrum)</h3>
+        <div class="flow"><span>список задач</span><i>→</i><span class="loop">круг 1–4 недели ↻</span><i>→</i><span>показ</span></div>
+        <p class="small">Работа идёт короткими кругами, в конце каждого — работающая часть продукта и показ. Задача считается готовой
+          только по общим условиям готовности (Definition of Done).</p>
+        <p class="small"><b>Плюс:</b> заказчик видит результат рано и поправляет курс. <b>Минус:</b> трудно заранее назвать
+          точную цену и состав.</p>
+      </div>
+      <div class="card ours-model">
+        <h3>Гибрид <span class="st st-doing">наш путь</span></h3>
+        <div class="flow"><span>требования</span><i>→</i><span>предложение</span><i>→</i><span>договор</span><i>→</i><span class="loop">итерации с показом ↻</span><i>→</i><span>приёмка</span></div>
+        <p class="small">Требования, предложение и договор — крупно и один раз: ТЗ (п. 13) требует предложение с оценкой до начала работ.
+          Внутри разработки — короткие круги: сначала сквозной каркас, потом функции по одной, каждую показываем.</p>
+        <p class="small"><b>Почему так:</b> так работают почти все заказные проекты с фиксированным объёмом; заказчик получает
+          цену, мы — раннюю проверку на работающем коде.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="cone-h">
+    <h2 id="cone-h">Почему сначала вопросы, а оценка потом</h2>
+    <p>Стив Макконнелл называет это «конусом неопределённости»: в начале проекта реальная трудоёмкость может оказаться
+      в 4 раза больше или в 4 раза меньше первой оценки. Разброс сужается, только когда принимаются решения;
+      само по себе время его не сужает. Поэтому мы не давали оценку до ответов заказчика.</p>
+    <div class="cone" role="img" aria-label="Разброс оценки по стадиям: от 0,25–4 раз на стадии идеи до 0,9–1,1 после детального проекта">
+      <div class="cone-row"><div class="lbl">Идея</div><div class="bar"><i style="left:0%;right:0%"></i><b></b><em>0,25–4×</em></div></div>
+      <div class="cone-row"><div class="lbl">Задача понятна в целом</div><div class="bar"><i style="left:25%;right:25%"></i><b></b><em>0,5–2×</em></div></div>
+      <div class="cone-row here"><div class="lbl">◀ мы здесь: требования почти собраны</div><div class="bar"><i style="left:30%;right:30%"></i><b></b><em></em></div></div>
+      <div class="cone-row"><div class="lbl">Требования собраны</div><div class="bar"><i style="left:35.6%;right:35.4%"></i><b></b><em>0,67–1,5×</em></div></div>
+      <div class="cone-row"><div class="lbl">Экраны спроектированы</div><div class="bar"><i style="left:42%;right:42%"></i><b></b><em>0,8–1,25×</em></div></div>
+      <div class="cone-row"><div class="lbl">Детальный проект готов</div><div class="bar"><i style="left:46.2%;right:46.6%"></i><b></b><em>0,9–1,1×</em></div></div>
+      <div class="cone-scale"><div></div><div><span>÷4</span><span>÷2</span><span>точно</span><span>×2</span><span>×4</span></div></div>
+    </div>
+    <p class="small muted" style="margin-top:10px">Шкала логарифмическая, вертикальная черта — точная оценка. Значения — по Макконнеллу
+      («Software Estimation», 2006, на основе данных Боэма). Отсюда практика: давать оценку диапазоном и уточнять её на каждом рубеже.</p>
+  </section>
+
+  <section aria-labelledby="stages-h">
+    <h2 id="stages-h">Стадии подробно</h2>
+    <p class="small muted">Каждую стадию можно развернуть. Внутри: из чего состоит, что на выходе, когда можно идти дальше и как это у нас.</p>
+
+    <details class="stage done" id="s1">
+      <summary><span class="num">1</span><span><span class="tt">Инициация</span><span class="ds">Решаем, беремся ли, и в каких рамках</span></span><span class="right"><span class="st st-done">Готово</span><span class="chev">▶</span></span></summary>
+      <div class="stage-body">
+        <div class="stage-cols">
+          <div><h4>Из чего состоит</h4><ul>
+            <li>получить запрос и исходные документы (ТЗ, описание бизнеса);</li>
+            <li>понять цель бизнеса: что должно измениться и почему это выгодно;</li>
+            <li>собрать ограничения: платформа, сроки, бюджет, законы;</li>
+            <li>грубо оценить, выполнимо ли и где главные риски;</li>
+            <li>определить рамки и порядок этапов, участников и контакты.</li>
+          </ul></div>
+          <div><h4>На выходе</h4><ul><li>решение «берёмся»;</li><li>рамки проекта и этапность;</li><li>список участников.</li></ul>
+            <h4 style="margin-top:12px">Когда идти дальше</h4><div class="gate">Понятно, что делаем, для кого и зачем; есть контакт с заказчиком.</div></div>
+        </div>
+        <div class="ours"><h4>Как у нас</h4><ul>
+          <li>ТЗ «Кабинет партнёра — бизнес-требования» получено и разобрано (14.10.2026).</li>
+          <li>Правило этапов: этап 1 — модуль для коробки, этап 2 — облако, только после полной сдачи этапа 1 (14.10).</li>
+          <li>Принцип продукта «как есть»: настраивается почти всё, доработки через точки расширения (16.10).</li>
+          <li><b>Отличие от обычного проекта:</b> у нас два контура сразу — проект для заказчика и тиражируемый продукт.
+            Отсюда больше работы на настройки, мастер и точки расширения.</li>
+        </ul></div>
+      </div>
+    </details>
+
+    <details class="stage doing" id="s2" open>
+      <summary><span class="num">2</span><span><span class="tt">Требования</span><span class="ds">Что именно должна делать система и как заказчик её примет</span></span><span class="right"><span class="st st-doing">Идёт, почти закрыта</span><span class="chev">▶</span></span></summary>
+      <div class="stage-body">
+        <p>Самая дешёвая стадия для исправления ошибок: поправить строчку в требованиях проще, чем переписывать код.
+          Требования бывают трёх уровней (Карл Вигерс): <b>бизнес-требования</b> — зачем; <b>пользовательские</b> — что делает
+          человек; <b>функциональные</b> — что делает система. Плюс <b>нефункциональные</b>: безопасность, скорость, нагрузка,
+          браузеры, законы.</p>
+        <div class="stage-cols">
+          <div><h4>Из чего состоит</h4><ul>
+            <li><b>сбор:</b> чтение ТЗ, опросники, интервью, показ прототипа;</li>
+            <li><b>анализ:</b> разбор каждого пункта, поиск пробелов и противоречий, явные трактовки вместо молчаливых;</li>
+            <li><b>нефункциональные требования:</b> защита, нагрузка, время отклика, устройства, 152-ФЗ;</li>
+            <li><b>приоритеты:</b> что в первый запуск, что потом (часто по MoSCoW: must / should / could / won't);</li>
+            <li><b>критерии приёмки:</b> проверяемые условия «готово»;</li>
+            <li><b>словарь терминов</b>, чтобы обе стороны понимали слова одинаково;</li>
+            <li><b>согласование</b> с заказчиком.</li>
+          </ul></div>
+          <div><h4>На выходе</h4><ul><li>согласованные требования;</li><li>вопросы и ответы, решения по противоречиям;</li><li>критерии приёмки;</li><li>список того, что не входит в работу.</li></ul>
+            <h4 style="margin-top:12px">Когда идти дальше</h4><div class="gate">Не осталось открытых вопросов, которые меняют объём или цену.</div></div>
+        </div>
+        <div class="ours"><h4>Как у нас</h4><ul>
+          <li>ТЗ разобрано в 12 шагов: что, почему, пункты ТЗ, расхождения, итог (РАЗБОР-ПЛАНА). <span class="st st-done">Готово</span></li>
+          <li>Опросник: 55 вопросов (14.10) → частичные ответы (16.10) → разбор закрыт, 55 из 55 (20.10). <span class="st st-done">Готово</span></li>
+          <li>7 противоречий внутри ТЗ вынесены явно (агентства, акт, документы, аналитика, каталог, уровень, платежи). <span class="st st-done">Готово</span></li>
+          <li>План разговора с заказчиком: 22 вопроса, блокирующие — Г1, Д1, Б6, Л1, З2. <span class="st st-client">Ждём заказчика</span></li>
+          <li>Технические вопросы администратору Т1–Т9: версия, DNS, SSL, доступы, почта, cron, капча, копия портала. <span class="st st-client">Ждём заказчика</span></li>
+          <li>Перед встречей проверить наши предложения по Е2, Е3, Л1, Л2, Д3: это рекомендации Claude, вы их ещё не принимали. <span class="st st-us">Решаем мы</span></li>
+          <li>Отдельного словаря терминов не было; первая версия — на <a href="index.html#gl-h">главной этой карты</a>.</li>
+        </ul></div>
+      </div>
+    </details>
+
+    <details class="stage doing" id="s3">
+      <summary><span class="num">3</span><span><span class="tt">Архитектура</span><span class="ds">Как устроена система: части, платформа, данные, защита</span></span><span class="right"><span class="st st-doing">Идёт</span><span class="chev">▶</span></span></summary>
+      <div class="stage-body">
+        <div class="stage-cols">
+          <div><h4>Из чего состоит</h4><ul>
+            <li>стек и платформа;</li>
+            <li>размещение: сервер, домен, сеть;</li>
+            <li>интеграции: как читаем и пишем данные других систем;</li>
+            <li>данные крупно: что где хранится и кто источник правды;</li>
+            <li>безопасность: вход, права, изоляция данных;</li>
+            <li>нагрузка и поведение при сбоях;</li>
+            <li>ключевые решения с обоснованием: контекст → решение → последствия (формат ADR, Майкл Найгард);</li>
+            <li>риски и технический долг.</li>
+          </ul></div>
+          <div><h4>На выходе</h4><ul><li>описание архитектуры: часто по модели C4 (контекст → контейнеры → компоненты → код) или по шаблону arc42;</li><li>журнал решений.</li></ul>
+            <h4 style="margin-top:12px">Когда идти дальше</h4><div class="gate">Приняты решения, которые дорого переделывать: где данные, как интеграция, как вход.</div></div>
+        </div>
+        <div class="ours"><h4>Как у нас</h4><ul>
+          <li>Решено: D7-модуль, CRM через ORM без REST (шаг 1); отдельный поддомен и фильтр по хосту (2); смарт-процесс
+            «Партнёры» (3); вход по коду на e-mail (7); фронт Vue 3 + Vite + стиль Bitrix24 Air (8); права — матрица Битрикса (10). <span class="st st-done">Готово</span></li>
+          <li>Журнал решений — DECISIONS.md: по сути наш ADR.</li>
+          <li>Открыто: <b>Д3 — где хранить начисления</b> (самое дорогое для переделки); компоненты кита или только стили, затем TS или JS;
+            В7 — реквизиты партнёров. <span class="st st-us">Решаем мы</span></li>
+          <li>Заготовки под облако (шаг 11) отложены до решения по правам на код. <span class="st st-us">Решаем мы</span></li>
+          <li>Картина частей и связей — на странице <a href="3-structure.html">«Структура»</a>.</li>
+        </ul></div>
+      </div>
+    </details>
+
+    <details class="stage doing" id="s4">
+      <summary><span class="num">4</span><span><span class="tt">Прототип</span><span class="ds">Как это будет выглядеть, до того как писать код</span></span><span class="right"><span class="st st-doing">Идёт</span><span class="chev">▶</span></span></summary>
+      <div class="stage-body">
+        <p>Ошибку на картинке исправить в разы дешевле, чем в коде. Заказчик видит свой процесс на экранах и замечает,
+          чего не хватает.</p>
+        <div class="stage-cols">
+          <div><h4>Из чего состоит</h4><ul>
+            <li>сценарии: кто, что и в каком порядке делает;</li>
+            <li>структура экранов и переходов;</li>
+            <li>кликабельный прототип ключевых экранов;</li>
+            <li>дизайн-система: цвета, шрифты, компоненты;</li>
+            <li>проверка с заказчиком и, если можно, с пользователями.</li>
+          </ul></div>
+          <div><h4>На выходе</h4><ul><li>прототип, согласованный заказчиком;</li><li>список правок.</li></ul>
+            <h4 style="margin-top:12px">Когда идти дальше</h4><div class="gate">Заказчик узнаёт свой процесс в экранах; спорные места решены.</div></div>
+        </div>
+        <div class="ours"><h4>Как у нас</h4><ul>
+          <li>Прототип: вход и 5 экранов п. 13 ТЗ, раскладки «телефон» и «компьютер», светлая и тёмная тема (19.10);
+            перекрашен под Bitrix24 Air (20.10). <span class="st st-done">Готово</span></li>
+          <li>Визуально одобрен; содержание экран за экраном ещё не разбирали. <span class="st st-us">Решаем мы</span></li>
+          <li>Ждут правки: экран «Документы», одна синяя кнопка «Передать клиента» на главной в раскладке «компьютер». <span class="st st-us">Решаем мы</span></li>
+        </ul></div>
+      </div>
+    </details>
+
+    <details class="stage" id="s5">
+      <summary><span class="num">5</span><span><span class="tt">Предложение и договор</span><span class="ds">Объём, цена, сроки, условия — точка решения для заказчика</span></span><span class="right"><span class="st st-future">Впереди</span><span class="chev">▶</span></span></summary>
+      <div class="stage-body">
+        <div class="stage-cols">
+          <div><h4>Из чего состоит</h4><ul>
+            <li>состав работ по этапам: что входит и что нет;</li>
+            <li>оценка трудоёмкости по блокам, диапазоном: оптимистично / реалистично / пессимистично;</li>
+            <li>график и вехи;</li>
+            <li>риски и допущения;</li>
+            <li>условия поддержки и гарантии;</li>
+            <li>права на результат: код, лицензия;</li>
+            <li>обработка персональных данных;</li>
+            <li>порядок приёмки.</li>
+          </ul></div>
+          <div><h4>На выходе</h4><ul><li>предложение;</li><li>договор и план-график.</li></ul>
+            <h4 style="margin-top:12px">Когда идти дальше</h4><div class="gate">Предложение согласовано, договор подписан.</div></div>
+        </div>
+        <div class="ours"><h4>Как у нас</h4><ul>
+          <li>ТЗ п. 13 задаёт состав предложения: архитектура и размещение, интеграция, вход и защита, где хранятся данные,
+            прототипы 5 экранов, этапы, оценка, поддержка, риски и вопросы.</li>
+          <li>Блокируют объём: Л1 (агентства), Л2 (акт по шаблону); модель денег — Д3. <span class="st st-client">Ждём заказчика</span></li>
+          <li>Права на код и пункт о доступе к персональным данным — с юристом. <span class="st st-us">Решаем мы</span></li>
+          <li>Список «Варианты на доработку» уже копится — пойдёт в предложение и в условия поддержки.</li>
+        </ul></div>
+      </div>
+    </details>
+
+    <details class="stage" id="s6">
+      <summary><span class="num">6</span><span><span class="tt">Технический проект</span><span class="ds">Конкретика, по которой можно писать код и делить работу</span></span><span class="right"><span class="st st-future">Впереди</span><span class="chev">▶</span></span></summary>
+      <div class="stage-body">
+        <div class="stage-cols">
+          <div><h4>Из чего состоит</h4><ul>
+            <li>модель данных: таблицы, поля, индексы, ограничения;</li>
+            <li>контракт API: адреса, запросы, ответы, ошибки (обычно OpenAPI);</li>
+            <li>структура модуля и классов, правила зависимостей;</li>
+            <li>события, фоновые задачи, список прав;</li>
+            <li>алгоритмы с примерами на цифрах: выбор ставки, начисление, сторно;</li>
+            <li>план тестов и тестовые данные;</li>
+            <li>разбивка на задачи и порядок (бэклог);</li>
+            <li>условия готовности задачи (Definition of Done).</li>
+          </ul></div>
+          <div><h4>На выходе</h4><ul><li>план кода;</li><li>бэклог задач;</li><li>описание API.</li></ul>
+            <h4 style="margin-top:12px">Когда идти дальше</h4><div class="gate">Каждая задача понятна и проверяема; порядок задач учитывает зависимости.</div></div>
+        </div>
+        <div class="ours"><h4>Как у нас</h4><ul>
+          <li>По плану — отдельный «план кода» после согласования предложения.</li>
+          <li>До него решить: компоненты кита или стили, TS или JS, Д3, схема выбора правила ставки (Е2).</li>
+          <li>Черновик частей, данных и папок — на странице <a href="3-structure.html">«Структура»</a>; эталон приёмки денег — 30 сделок (п. 12 ТЗ),
+            формула и примеры (Д9).</li>
+          <li>Готовые шаблоны (<a href="4-practices.html#code">Практики</a>): структура проектного документа Google, условия готовности
+            Microsoft, модель угроз STRIDE (черновик есть), правила API, тесты по размерам, пороги скорости на телефоне.</li>
+        </ul></div>
+      </div>
+    </details>
+
+    <details class="stage" id="s7">
+      <summary><span class="num">7</span><span><span class="tt">Окружение</span><span class="ds">Где пишем, храним и проверяем код</span></span><span class="right"><span class="st st-future">Впереди</span><span class="chev">▶</span></span></summary>
+      <div class="stage-body">
+        <div class="stage-cols">
+          <div><h4>Из чего состоит</h4><ul>
+            <li>репозиторий и правила работы с ним (git, ветки, сообщения коммитов);</li>
+            <li>тестовый стенд: портал, настройки, тестовые данные;</li>
+            <li>сборка одной командой (у нас — фронт кабинета);</li>
+            <li>автотесты и их запуск;</li>
+            <li>правила оформления кода (для PHP — PSR-12);</li>
+            <li>резервные копии.</li>
+          </ul></div>
+          <div><h4>На выходе</h4><ul><li>рабочий стенд;</li><li>репозиторий;</li><li>инструкция «как поднять».</li></ul>
+            <h4 style="margin-top:12px">Когда идти дальше</h4><div class="gate">Любой участник поднимает стенд по инструкции и запускает тесты.</div></div>
+        </div>
+        <div class="ours"><h4>Как у нас</h4><ul>
+          <li>Тестовый портал: коробка свежей версии, лицензия девелоперская или пробная на 30 дней — не выбрано. <span class="st st-us">Решаем мы</span></li>
+          <li>На стенде повторить структуру CRM заказчика и построить воронку «Агенты» с автоматизациями (для демо — сами).</li>
+          <li>Node для сборки фронта — есть в Laragon (22.x).</li>
+          <li><b>Проект сейчас не в git.</b> Рекомендация: завести репозиторий уже сейчас, хотя бы для документов —
+            появится история правок и откат. <span class="st st-us">Решаем мы</span></li>
+        </ul></div>
+      </div>
+    </details>
+
+    <details class="stage" id="s8">
+      <summary><span class="num">8</span><span><span class="tt">Разработка</span><span class="ds">Код небольшими законченными частями, каждую показываем</span></span><span class="right"><span class="st st-future">Впереди</span><span class="chev">▶</span></span></summary>
+      <div class="stage-body">
+        <div class="stage-cols">
+          <div><h4>Из чего состоит</h4><ul>
+            <li><b>ходячий скелет</b> (Алистер Кокберн): самая тонкая сквозная версия, где все части уже соединены —
+              у нас «модуль ставится → партнёр входит → видит сделку из CRM»;</li>
+            <li><b>вертикальные срезы:</b> одна функция целиком, от экрана до базы;</li>
+            <li>юнит-тесты рядом с кодом;</li>
+            <li>проверка кода (ревью);</li>
+            <li>показ по итогам каждого круга;</li>
+            <li>документация по ходу: README, инструкции.</li>
+          </ul></div>
+          <div><h4>На выходе</h4><ul><li>рабочие версии (инкременты);</li><li>показы заказчику.</li></ul>
+            <h4 style="margin-top:12px">Когда идти дальше</h4><div class="gate">Все функции этапа готовы по Definition of Done.</div></div>
+        </div>
+        <div class="ours"><h4>Как у нас</h4><ul>
+          <li>Порядок по рискам: сначала самое неопределённое и важное — расчёт денег (чистый PHP + тесты), передача клиента в CRM,
+            вход и изоляция «А не видит Б».</li>
+          <li>Vue осваиваем по ходу: каждую новую конструкцию объясняю.</li>
+          <li>Демо — работающий модуль на нашем тестовом портале с тестовыми данными.</li>
+        </ul></div>
+      </div>
+    </details>
+
+    <details class="stage" id="s9">
+      <summary><span class="num">9</span><span><span class="tt">Тесты и приёмка</span><span class="ds">Система делает то, что нужно, и сделана правильно</span></span><span class="right"><span class="st st-future">Впереди</span><span class="chev">▶</span></span></summary>
+      <div class="stage-body">
+        <div class="stage-cols">
+          <div><h4>Из чего состоит</h4><ul>
+            <li><b>пирамида тестов</b> (Майк Кон, Мартин Фаулер): много быстрых юнит-тестов, меньше интеграционных,
+              немного сквозных через интерфейс;</li>
+            <li>функциональные сценарии по требованиям;</li>
+            <li>безопасность: изоляция данных, вход, проверка по чек-листу OWASP ASVS, пентест;</li>
+            <li>производительность под заданную нагрузку;</li>
+            <li>совместимость: браузеры, ширина экрана;</li>
+            <li>приёмочные испытания с заказчиком по критериям.</li>
+          </ul></div>
+          <div><h4>На выходе</h4><ul><li>результаты тестов;</li><li>акт приёмки.</li></ul>
+            <h4 style="margin-top:12px">Когда идти дальше</h4><div class="gate">Выполнены все критерии приёмки; критичных ошибок нет.</div></div>
+        </div>
+        <div class="ours"><h4>Как у нас</h4><ul>
+          <li>Приёмка по п. 12 ТЗ: вход с телефона и компьютера; заблокированный сразу теряет доступ; «А не видит Б» даже при подмене ID;
+            три способа передачи; смена стадии видна за 5 минут; 30 сделок совпадают с ручным расчётом; смена правила не меняет
+            начисленное; 360 px; развёртывание по инструкции. Облако — в приёмку этапа 2.</li>
+          <li>Где приёмка — копия рабочего портала на сервере заказчика (Б6★). <span class="st st-client">Ждём заказчика</span></li>
+          <li>Нагрузка по ТЗ: до 500 партнёров и 10 000 сделок.</li>
+          <li>Пентест рекомендуем перед запуском, отдельной строкой (З3).</li>
+          <li>Пропорция тестов — по Google: много маленьких (расчёт денег), меньше средних (с базой), немного больших (через браузер);
+            скорость на телефоне — по порогам Core Web Vitals (<a href="4-practices.html#code">Практики, П10–П11</a>).</li>
+        </ul></div>
+      </div>
+    </details>
+
+    <details class="stage" id="s10">
+      <summary><span class="num">10</span><span><span class="tt">Внедрение и запуск</span><span class="ds">Ставим у заказчика, настраиваем, обучаем, запускаем</span></span><span class="right"><span class="st st-future">Впереди</span><span class="chev">▶</span></span></summary>
+      <div class="stage-body">
+        <div class="stage-cols">
+          <div><h4>Из чего состоит</h4><ul>
+            <li>установка и настройка;</li>
+            <li>инфраструктура: домен, сертификат, почта, расписание задач;</li>
+            <li>заведение данных;</li>
+            <li>инструкции и обучение;</li>
+            <li>пилот на части пользователей;</li>
+            <li>запуск для всех;</li>
+            <li>план отката, если что-то пойдёт не так.</li>
+          </ul></div>
+          <div><h4>На выходе</h4><ul><li>работающая система у заказчика;</li><li>инструкции администратора и пользователей.</li></ul>
+            <h4 style="margin-top:12px">Когда идти дальше</h4><div class="gate">Пользователи работают, критичных ошибок нет.</div></div>
+        </div>
+        <div class="ours"><h4>Как у нас</h4><ul>
+          <li>Установка из портала: установщик → мастер → страница «Проверка». Вне портала — только DNS-запись и сертификат.</li>
+          <li>Блокируют запуск: воронка «Агенты» и автоматизации (Г1★), юридические тексты (З2★), почта — единственный способ входа (Б7),
+            ответы администратора Т1–Т9. <span class="st st-client">Ждём заказчика</span></li>
+          <li>Импорта партнёров нет: партнёры приходят через анкету или приглашение менеджера (В1).</li>
+          <li>Инструкции и руководства — требование ТЗ п. 10, заложить в оценку.</li>
+          <li>Чек-лист готовности к запуску — по образцу AWS и Google SRE; часть пунктов может проверять страница «Проверка»
+            (<a href="4-practices.html#launch">Практики, П12</a>).</li>
+        </ul></div>
+      </div>
+    </details>
+
+    <details class="stage" id="s11">
+      <summary><span class="num">11</span><span><span class="tt">Сопровождение и развитие</span><span class="ds">Исправляем, обновляем, развиваем</span></span><span class="right"><span class="st st-future">Впереди</span><span class="chev">▶</span></span></summary>
+      <div class="stage-body">
+        <div class="stage-cols">
+          <div><h4>Из чего состоит</h4><ul>
+            <li>поддержка: каналы и сроки реакции;</li>
+            <li>исправление ошибок;</li>
+            <li>обновления: номер версии по смыслу (MAJOR.MINOR.PATCH — semver) + миграции базы;</li>
+            <li>совместимость с обновлениями платформы;</li>
+            <li>доработки по заказу;</li>
+            <li>развитие по дорожной карте;</li>
+            <li>вывод из эксплуатации, если придётся.</li>
+          </ul></div>
+          <div><h4>На выходе</h4><ul><li>новые версии;</li><li>журнал изменений.</li></ul></div>
+        </div>
+        <div class="ours"><h4>Как у нас</h4><ul>
+          <li>Обновления модуля — версии + миграции; доработки клиента через точки расширения обновлением не затираются.</li>
+          <li>Этап развития по ТЗ (агентства, уровни, акты, новости, аналитика…) — по запросу заказчика.</li>
+          <li>Этап 2 — облако — только после полной сдачи этапа 1. Подробнее — <a href="2-roadmap.html">дорожная карта</a>.</li>
+          <li>Миграции — в два шага, как у Amazon: новое добавляем сразу, старое убираем только в следующей версии; обновление
+            с прошлой версии проверяем на копии (<a href="4-practices.html#launch">Практики, П13</a>).</li>
+        </ul></div>
+      </div>
+    </details>
+  </section>
+
+  <section aria-labelledby="cross-h">
+    <h2 id="cross-h">Что идёт через все стадии</h2>
+    <p class="small muted">Это не отдельные шаги, а постоянные занятия: в ISO 12207 и SWEBOK их называют процессами управления и поддержки.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Процесс</th><th>Зачем</th><th>Как у нас</th><th>Статус</th></tr></thead>
+      <tbody>
+        <tr><td><b>Управление проектом</b></td><td>План, статус, договорённости, кто что делает</td><td>«Где остановились» в РАЗБОР-ПЛАНА, эта карта</td><td><span class="st st-done">Есть</span></td></tr>
+        <tr><td><b>Требования и изменения</b></td><td>Каждое изменение записано, его влияние оценено</td><td>Журнал ответов заказчика со статусами, итоги в шагах</td><td><span class="st st-done">Есть</span></td></tr>
+        <tr><td><b>Решения</b></td><td>Через полгода понятно, почему сделали так</td><td>DECISIONS.md + обоснования в шагах (по сути ADR). По образцу Microsoft не хватает уровня уверенности и статуса «заменено»</td><td><span class="st st-done">Есть</span></td></tr>
+        <tr><td><b>Риски</b></td><td>Заранее знать, что может пойти не так, и что делаем</td><td>Риски описаны внутри шагов, единого списка нет. Быстрый способ собрать — час pre-mortem (Atlassian)</td><td><span class="st st-us">Не хватает</span></td></tr>
+        <tr><td><b>Версии и конфигурация</b></td><td>История изменений, откат, понятные версии модуля</td><td>Проект не в git; версии модуля — с первого кода</td><td><span class="st st-us">Не хватает</span></td></tr>
+        <tr><td><b>Качество</b></td><td>Тесты, проверка кода, условия готовности</td><td>Юнит-тесты денег и изоляции заложены в план; DoD — в план кода</td><td><span class="st st-future">Впереди</span></td></tr>
+        <tr><td><b>Безопасность и ПДн</b></td><td>Защиту закладывают с первой стадии, а не в конце</td><td>Шаг 7: вход, сессии, изоляция, журнал; 152-ФЗ; пентест</td><td><span class="st st-done">Есть</span></td></tr>
+        <tr><td><b>Юридическое</b></td><td>Права на код, договор, поручение обработки ПДн</td><td>У пользователя с юристом</td><td><span class="st st-us">Решаем мы</span></td></tr>
+        <tr><td><b>Документация</b></td><td>Для заказчика (инструкции) и для команды</td><td>Документы разбора; инструкции — к запуску (ТЗ п. 10)</td><td><span class="st st-doing">Идёт</span></td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section aria-labelledby="audit-h">
+    <h2 id="audit-h">Сверка: как мы идём</h2>
+    <div class="grid g2">
+      <div class="card">
+        <h3>Что делаем правильно</h3>
+        <ul class="check good">
+          <li><b>Требования разобраны глубоко</b>, противоречия ТЗ вынесены явно, а не истолкованы молча.</li>
+          <li><b>Решения записаны с обоснованием и вариантами</b> — то, что в практике называют журналом архитектурных решений.</li>
+          <li><b>Прототип до оценки</b> — дешёвая проверка понимания, как и требует ТЗ п. 13.</li>
+          <li><b>Оценка после ответов</b> — соответствует «конусу неопределённости»: рано названная цифра ошибается в разы.</li>
+          <li><b>Безопасность с первой стадии:</b> изоляция «А не видит Б», вход по коду, журнал, пентест.</li>
+          <li><b>Продукт продуман заранее:</b> настройки, точки расширения, никаких зашитых ID — дешевле, чем переделывать потом.</li>
+          <li><b>Этапы разведены:</b> облако не тянет сроки этапа 1.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Чего не хватает и что предлагаю</h3>
+        <ul class="check gap">
+          <li><b>Нет git.</b> Завести репозиторий сейчас, для документов и будущего кода. <span class="prio">сейчас</span></li>
+          <li><b>Нет единого списка рисков.</b> Собрать из шагов в одну таблицу: риск, вероятность, влияние, мера. Он же — раздел предложения. <span class="prio">к предложению</span></li>
+          <li><b>Нет тестового портала.</b> Без него не начать ни скелет, ни демо: выбрать лицензию заранее. <span class="prio">до плана кода</span></li>
+          <li><b>Нет условий готовности задачи и плана тестов.</b> 30 сделок приёмки превратить в тестовые сценарии с ожидаемыми суммами. <span class="prio">в плане кода</span></li>
+          <li><b>Длинная фаза без кода.</b> Риск «анализа без конца». Мера: после договора сразу ходячий скелет; часть работ (стенд, git) не ждёт заказчика. <span class="prio">после договора</span></li>
+          <li><b>Главный документ разросся</b> (РАЗБОР-ПЛАНА — 2 255 строк). Предложение по п. 13 станет коротким описанием архитектуры; эта карта — навигация. <span class="prio">к предложению</span></li>
+          <li><b>Юридические вопросы</b> (права на код, ПДн) блокируют договор и облако — держать в поле зрения. <span class="prio">до договора</span></li>
+          <li><b>Повтор передачи клиента не защищён:</b> двойная отправка формы или повтор из очереди создадут вторую сделку.
+            Нужен ID передачи, как у Amazon (<a href="4-practices.html#key">Практики</a>). <span class="prio">в плане кода</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="src-h">
+    <h2 id="src-h">Источники</h2>
+    <ul class="src small">
+      <li><a href="https://en.wikipedia.org/wiki/ISO/IEC_12207">ISO/IEC/IEEE 12207</a> — международный стандарт процессов жизненного цикла ПО: требования, архитектура, реализация, интеграция, проверка, ввод, сопровождение.</li>
+      <li><a href="https://www.computer.org/education/bodies-of-knowledge/software-engineering">SWEBOK Guide v4.0</a> (IEEE Computer Society, 2024) — свод знаний программной инженерии, 18 областей, включая архитектуру, эксплуатацию и безопасность.</li>
+      <li>ГОСТ 34.601-90 «Автоматизированные системы. Стадии создания» и сменивший его в 2022 г. <a href="https://meganorm.ru/mega_doc/norm/gost-r_gosudarstvennyj-standart/1/gost_r_59793-2021_natsionalnyy_standart_rossiyskoy.html">ГОСТ Р 59793-2021</a> — российская «водопадная» модель стадий.</li>
+      <li><a href="https://scrumguides.org/scrum-guide.html">Scrum Guide 2020</a> (Швабер, Сазерленд) — итерации, инкремент, Definition of Done.</li>
+      <li>К. Вигерс, Дж. Битти, <a href="https://www.pearson.com/store/en-us/p/software-requirements/P200000000686/9780735679665">«Software Requirements», 3-е изд.</a> (2013) — уровни требований и работа с ними.</li>
+      <li>С. Макконнелл, «Software Estimation» (2006); <a href="https://www.construx.com/wp-content/uploads/2019/02/CxWhitePaper_ConeOfUncertainty.pdf">статья о конусе неопределённости</a> (Construx).</li>
+      <li>М. Найгард, <a href="https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions">«Documenting Architecture Decisions»</a> (2011) — формат ADR.</li>
+      <li><a href="https://c4model.com">Модель C4</a> (Саймон Браун) и <a href="https://docs.arc42.org/home/">шаблон arc42</a> — как описывать архитектуру.</li>
+      <li>А. Кокберн, «Crystal Clear» — ходячий скелет; <a href="https://henricodolfing.com/2018/04/start-your-project-with-walking-skeleton.html">разбор приёма</a>.</li>
+      <li>Х. Фоке, <a href="https://martinfowler.com/articles/practical-test-pyramid.html">«The Practical Test Pyramid»</a> (на сайте Мартина Фаулера) — пирамида тестов.</li>
+      <li><a href="https://owasp.org/www-project-application-security-verification-standard/">OWASP ASVS 5.0</a> (2025) — чек-лист требований к защите веб-приложений.</li>
+      <li><a href="https://semver.org/lang/ru/">Семантическое версионирование 2.0.0</a> — правила номеров версий.</li>
+    </ul>
+  </section>
+
+  <footer>Снимок на 21.10.2026 · Кабинет партнёра · карта проекта</footer>
+</main>
+<script>
+(function(){
+  var KEY='zk-map-theme', root=document.documentElement, btn=document.getElementById('themeBtn');
+  var names={auto:'Тема: авто',light:'Тема: светлая',dark:'Тема: тёмная'};
+  function get(){try{return localStorage.getItem(KEY)||'auto'}catch(e){return 'auto'}}
+  function set(v){try{localStorage.setItem(KEY,v)}catch(e){}}
+  function apply(v){if(v==='auto'){root.removeAttribute('data-theme')}else{root.setAttribute('data-theme',v)} if(btn){btn.textContent=names[v]}}
+  var cur=get(); apply(cur);
+  if(btn){btn.addEventListener('click',function(){cur=cur==='auto'?'light':(cur==='light'?'dark':'auto'); set(cur); apply(cur)})}
+  // переход по полосе стадий раскрывает нужную стадию
+  function openFromHash(){var id=location.hash.slice(1); var el=id&&document.getElementById(id); if(el&&el.tagName==='DETAILS'){el.open=true}}
+  window.addEventListener('hashchange',openFromHash); openFromHash();
+})();
+</script>
+</body>
+</html>

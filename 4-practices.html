@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Практики крупных команд</title>
+<meta name="description" content="Что полезного у Google, Microsoft, Amazon и Atlassian для проекта «Кабинет партнёра» и куда это ложится у нас.">
+<style>
+/* ===== Токены Bitrix24 Air (как в prototypes/index.html) ===== */
+:root{
+  --app:#EEF2F4; --card:#FFFFFF; --card-2:#F8FAFB; --ink:#333333; --ink-2:#525C69; --muted:#828B95; --dim:#A8ADB4;
+  --line:#EDEEF0; --line-2:#DFE0E3; --accent:#0075FF; --accent-weak:#E6F4FF; --sel:#EDF7FF; --link:#0154C8; --on-accent:#FFFFFF;
+  --ok:#24B547; --ok-weak:#CAFFE7; --ok-ink:#0B7A2B;
+  --warn:#E88C02; --warn-weak:#FFF4D6; --warn-ink:#8F5300;
+  --bad:#FF5752; --bad-weak:#FFE8E8; --bad-ink:#B8231E;
+  --info-ink:#0154C8; --na-weak:#EDEEF0; --na-ink:#5C6670;
+  --violet-weak:#F1E9FF; --violet-ink:#6A2FC2;
+  --shadow-s:0 2px 4px 0 rgba(0,0,0,.08);
+  --font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,Menlo,monospace;
+  --r-sm:8px; --r-md:10px; --r-lg:12px; --r-xl:16px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --app:#171717; --card:#262626; --card-2:#1F1F1F; --ink:#F8F8F8; --ink-2:#CACBCC; --muted:#A7A9AB; --dim:#828385;
+    --line:#373838; --line-2:#555657; --accent:#1587FA; --accent-weak:#062040; --sel:#1F3048; --link:#6AA6F5;
+    --ok:#22AC43; --ok-weak:#052717; --ok-ink:#6BD785; --warn:#E0911D; --warn-weak:#302000; --warn-ink:#F3B24F;
+    --bad:#F2473D; --bad-weak:#300E0C; --bad-ink:#FF8A84; --info-ink:#7AB1FF; --na-weak:#373838; --na-ink:#B5B7B9;
+    --violet-weak:#2A1748; --violet-ink:#C4A3FF; --shadow-s:0 2px 4px 0 rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --app:#171717; --card:#262626; --card-2:#1F1F1F; --ink:#F8F8F8; --ink-2:#CACBCC; --muted:#A7A9AB; --dim:#828385;
+  --line:#373838; --line-2:#555657; --accent:#1587FA; --accent-weak:#062040; --sel:#1F3048; --link:#6AA6F5;
+  --ok:#22AC43; --ok-weak:#052717; --ok-ink:#6BD785; --warn:#E0911D; --warn-weak:#302000; --warn-ink:#F3B24F;
+  --bad:#F2473D; --bad-weak:#300E0C; --bad-ink:#FF8A84; --info-ink:#7AB1FF; --na-weak:#373838; --na-ink:#B5B7B9;
+  --violet-weak:#2A1748; --violet-ink:#C4A3FF; --shadow-s:0 2px 4px 0 rgba(0,0,0,.4);
+}
+/* ===== База ===== */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:72px}
+body{margin:0;background:var(--app);color:var(--ink);font:15px/1.55 var(--font)}
+a{color:var(--link);text-decoration:none} a:hover{text-decoration:underline}
+code{font-family:var(--mono);font-size:.9em;background:var(--card-2);border:1px solid var(--line);border-radius:6px;padding:0 4px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+header.top{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:12px 16px;min-height:56px;flex-wrap:wrap;padding-top:6px;padding-bottom:6px}
+.brand{font-weight:700;color:var(--ink);line-height:1.2}
+.brand small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+nav.tabs{display:flex;gap:2px;flex-wrap:wrap;flex:1}
+nav.tabs a{padding:7px 11px;border-radius:var(--r-md);color:var(--ink-2);font-weight:500;font-size:14px}
+nav.tabs a:hover{background:var(--card-2);text-decoration:none}
+nav.tabs a[aria-current="page"]{background:var(--accent-weak);color:var(--link)}
+.theme-btn{border:1px solid var(--line-2);background:var(--card);color:var(--ink-2);border-radius:var(--r-md);padding:6px 10px;font:inherit;font-size:13px;cursor:pointer}
+.hero{padding:32px 0 4px}
+.hero h1{font-size:30px;line-height:1.2;margin:0 0 10px;letter-spacing:-.01em}
+.lead{font-size:17px;color:var(--ink-2);max-width:800px;margin:0}
+.meta{margin-top:12px;color:var(--muted);font-size:13px}
+section{margin:30px 0}
+h2{font-size:22px;line-height:1.3;margin:0 0 12px}
+h3{font-size:17px;line-height:1.35;margin:0 0 8px}
+p{margin:0 0 10px}
+ul,ol{margin:0 0 10px;padding-left:22px} li{margin:3px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-xl);padding:20px 22px;box-shadow:var(--shadow-s)}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.muted{color:var(--muted)} .small{font-size:13px}
+.st{display:inline-flex;align-items:center;gap:6px;padding:1px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;line-height:20px;vertical-align:middle}
+.st::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.st-done{background:var(--ok-weak);color:var(--ok-ink)}
+.st-doing{background:var(--accent-weak);color:var(--info-ink)}
+.st-client{background:var(--warn-weak);color:var(--warn-ink)}
+.st-us{background:var(--bad-weak);color:var(--bad-ink)}
+.st-future{background:var(--na-weak);color:var(--na-ink)}
+.st-idea{background:var(--violet-weak);color:var(--violet-ink)}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--card)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{background:var(--card-2);color:var(--ink-2);font-weight:600;font-size:13px}
+tr:last-child td{border-bottom:0}
+footer{margin:40px 0 32px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:16px}
+@media (max-width:600px){.hero h1{font-size:24px}.lead{font-size:16px}.card{padding:16px}}
+/* ===== Страница ===== */
+.toc{display:flex;flex-wrap:wrap;gap:8px}
+.toc a{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:13px;color:var(--ink-2)}
+.toc a:hover{border-color:var(--accent);text-decoration:none}
+.key{border:2px solid var(--bad);background:var(--card)}
+.key h2{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:12px 0}
+.steps div{background:var(--card-2);border:1px solid var(--line);border-radius:var(--r-lg);padding:12px 14px;font-size:14px}
+.steps b{display:block;margin-bottom:4px}
+.pr{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.p{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.p-h{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.p-h b{font-size:15px}
+.p-h .id{font-size:12px;font-weight:700;color:var(--muted)}
+.co{font-size:12px;font-weight:600;border-radius:6px;padding:1px 8px;background:var(--card-2);border:1px solid var(--line);color:var(--ink-2)}
+.p .what{font-size:14px;color:var(--ink-2);margin:0}
+.p .our{font-size:14px;background:var(--sel);border-left:3px solid var(--accent);border-radius:8px;padding:8px 10px;margin:0}
+.p .our b{color:var(--link)}
+.p .foot{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:auto;font-size:13px}
+.group-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:26px 0 10px}
+.group-h h2{margin:0}
+.group-h span{color:var(--muted);font-size:13px}
+.check{list-style:none;padding:0;margin:0}
+.check li{padding-left:26px;position:relative;margin:7px 0}
+.check li::before{content:"✓";position:absolute;left:0;top:1px;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;background:var(--ok-weak);color:var(--ok-ink)}
+.src li{margin:6px 0}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="brand">Кабинет партнёра<small>карта проекта</small></div>
+  <nav class="tabs" aria-label="Разделы">
+    <a href="index.html">Обзор</a>
+    <a href="1-process.html">Как разрабатывают</a>
+    <a href="2-roadmap.html">Дорожная карта</a>
+    <a href="3-structure.html">Структура</a>
+    <a href="4-practices.html" aria-current="page">Практики</a>
+  </nav>
+  <button class="theme-btn" id="themeBtn" type="button">Тема: авто</button>
+</div></header>
+
+<main class="wrap">
+  <div class="hero">
+    <h1>Практики крупных команд</h1>
+    <p class="lead">Что полезного нашлось в бесплатных материалах Google, Microsoft, Amazon и Atlassian и куда это ложится
+      в нашем проекте. Разложено по времени: что пригодится сейчас, к предложению, к плану кода, к запуску.</p>
+    <p class="meta">Это предложения Claude, не решения: внедрять или нет, решает пользователь. Что уже внесено в карту —
+      помечено. Снимок на 21.10.2026.</p>
+  </div>
+
+  <nav class="toc" aria-label="Содержание">
+    <a href="#key">Главная находка</a><a href="#later">Отложено — не забыть</a><a href="#now">Сейчас</a><a href="#offer">К предложению</a>
+    <a href="#code">К плану кода</a><a href="#launch">К запуску и обновлениям</a><a href="#learn">Учиться</a>
+    <a href="#match">Уже совпадает</a><a href="#src">Источники</a>
+  </nav>
+
+  <section id="key" class="card key" aria-labelledby="key-h">
+    <h2 id="key-h">Главная находка: повтор передачи клиента <span class="st st-us">Открыто у нас</span></h2>
+    <p>У Amazon правило: любую операцию с последствиями должно быть безопасно повторить. Каждый запрос несёт свой
+      уникальный ID; повтор с тем же ID возвращает прежний результат, а не делает работу второй раз. В нашем плане так
+      защищены только начисления (уникальный ID оплаты). <b>Передача клиента не защищена.</b></p>
+    <div class="steps">
+      <div><b>Сценарий 1 — двойная отправка</b>Партнёр на плохой мобильной связи не дождался ответа и нажал «Отправить» ещё раз.
+        Итог — две передачи и две сделки.</div>
+      <div><b>Сценарий 2 — повтор из очереди</b>CRM создала сделку, но ответ потерялся. Агент досылает заявку из очереди —
+        и создаёт дубль сделки.</div>
+      <div><b>Что предлагаю</b>Кабинет при открытии формы создаёт ID передачи. Сервер хранит его как уникальный и сохраняет
+        вместе со сделкой. Перед повтором из очереди модуль проверяет, нет ли уже сделки с этим ID.</div>
+    </div>
+    <p class="small muted" style="margin:0">Источник: <a href="https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/">Amazon Builders' Library — «Making retries safe with idempotent APIs»</a>.
+      Там же: повтор с тем же ID, но другими данными — это ошибка, а не новая операция; ID и сама операция записываются
+      вместе, «всё или ничего». Отмечено на странице <a href="3-structure.html#flows">«Структура»</a>, сценарий 2.</p>
+  </section>
+
+  <section id="later" class="card" aria-labelledby="later-h" style="border-left:4px solid var(--violet-ink)">
+    <h2 id="later-h">Отложено сознательно — не забыть</h2>
+    <p class="small muted">21.10.2026 в карту это не вносили намеренно: нужно ваше участие или это работа плана кода.
+      Напоминания стоят в «Следующих шагах» РАЗБОР-ПЛАНА, в DECISIONS («Открыто у нас») и на вехах дорожной карты.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Что</th><th>Почему не сейчас</th><th>Когда вернуться</th></tr></thead>
+      <tbody>
+        <tr><td><b>Список рисков</b> через pre-mortem (П2, П3)</td><td>Риски должны увидеть и взвесить вы, а не Claude в одиночку</td><td>Перед предложением · <a href="2-roadmap.html#path-h">веха М5</a></td></tr>
+        <tr><td><b>Формат DECISIONS.md</b>: уверенность, статус «заменено», только добавление (П6)</td><td>Рабочий документ — меняем только по вашему решению</td><td>Когда решите · <a href="2-roadmap.html#path-h">веха М4</a></td></tr>
+        <tr><td><b>Полная модель угроз</b> из черновика (П8) + срок хранения журнала, лимит запросов к API</td><td>Это работа плана кода; черновик есть</td><td>План кода · <a href="2-roadmap.html#path-h">веха М7</a></td></tr>
+        <tr><td><b>Definition of Done</b> на трёх уровнях (П7)</td><td>Работа плана кода</td><td>План кода · веха М7</td></tr>
+        <tr><td><b>Контракт API</b> по П9 вместе с ID передачи</td><td>Работа плана кода</td><td>План кода · веха М7</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <div class="group-h" id="now"><h2>Сейчас</h2><span>до разговора с заказчиком</span></div>
+  <div class="pr">
+    <div class="p">
+      <div class="p-h"><span class="id">П1</span><b>Двери в одну сторону</b><span class="co">Amazon</span></div>
+      <p class="what">Джефф Безос (письмо акционерам, 2015): необратимые решения принимают медленно и вдумчиво, обратимые —
+        быстро. Беда больших команд — тратить на обратимые столько же сил, сколько на необратимые.</p>
+      <p class="our"><b>У нас:</b> в таблицу «что блокирует что» добавлена колонка «тип решения». На разговоре с заказчиком
+        время — в первую очередь на необратимые и дорогие: Д3, Г1, Е2.</p>
+      <div class="foot"><span class="st st-done">Внесено в карту</span><a href="2-roadmap.html#mx-h">Дорожная карта →</a></div>
+    </div>
+    <div class="p">
+      <div class="p-h"><span class="id">П2</span><b>«Вскрытие до смерти» (pre-mortem)</b><span class="co">Atlassian</span></div>
+      <p class="what">Час на 3–11 человек: «представим, что проект провалился — почему?». Каждый молча пишет причины,
+        группируют, голосуют за главные угрозы. По каждой — мера, владелец и срок.</p>
+      <p class="our"><b>У нас:</b> провести одну такую сессию до предложения — даже вдвоём. Получится единый список рисков,
+        которого сейчас нет (сверка на странице процесса).</p>
+      <div class="foot"><span class="st st-idea">Предложение</span><a href="https://www.atlassian.com/team-playbook/plays/pre-mortem">Как проводить →</a></div>
+    </div>
+  </div>
+
+  <div class="group-h" id="offer"><h2>К предложению</h2><span>п. 13 ТЗ</span></div>
+  <div class="pr">
+    <div class="p">
+      <div class="p-h"><span class="id">П3</span><b>Список рисков</b><span class="co">Atlassian · практика</span></div>
+      <p class="what">Таблица: риск → вероятность → влияние → мера → владелец → срок. Пополняется из pre-mortem и по ходу проекта.</p>
+      <p class="our"><b>У нас:</b> риски разбросаны по шагам разбора. Собрать в одну таблицу — она же раздел «Риски» предложения.</p>
+      <div class="foot"><span class="st st-idea">Предложение</span></div>
+    </div>
+    <div class="p">
+      <div class="p-h"><span class="id">П4</span><b>Пресс-релиз из будущего (PR/FAQ)</b><span class="co">Amazon</span></div>
+      <p class="what">До разработки пишут одностраничный пресс-релиз о готовом продукте и FAQ: сначала вопросы клиентов,
+        потом внутренние. Если из пресс-релиза не видно выгоды — продукт не начинают.</p>
+      <p class="our"><b>У нас:</b> одна страница «Кабинет партнёра для Битрикс24» + FAQ. Для продукта «как есть» — как мы его
+        объясним следующим клиентам; для предложения — язык выгоды заказчика вместо технических терминов.</p>
+      <div class="foot"><span class="st st-idea">Предложение</span><a href="https://productschool.com/blog/product-fundamentals/prfaq">Разбор метода →</a></div>
+    </div>
+  </div>
+
+  <div class="group-h" id="code"><h2>К плану кода</h2><span>технический проект</span></div>
+  <div class="pr">
+    <div class="p">
+      <div class="p-h"><span class="id">П5</span><b>Проектный документ</b><span class="co">Google</span></div>
+      <p class="what">Перед кодом — документ на 3–20 страниц: контекст и рамки, <b>цели и явные не-цели</b>, устройство,
+        рассмотренные альтернативы, сквозные вопросы (безопасность, ПДн, наблюдаемость). Жёсткого шаблона нет.</p>
+      <p class="our"><b>У нас:</b> взять эту структуру для «плана кода». Раздел «не-цели» явно отсечёт то, что ушло в этап
+        развития и доработки.</p>
+      <div class="foot"><span class="st st-idea">Предложение</span><a href="https://www.industrialempathy.com/posts/design-docs-at-google/">Design Docs at Google →</a></div>
+    </div>
+    <div class="p">
+      <div class="p-h"><span class="id">П6</span><b>Формат журнала решений</b><span class="co">Microsoft</span></div>
+      <p class="what">В записи: проблема и контекст, варианты, решение и компромиссы, <b>уровень уверенности</b>, статус
+        «предложено / принято / заменено». Принятое не правят: новая запись заменяет старую и ссылается на неё.</p>
+      <p class="our"><b>У нас:</b> DECISIONS.md уже близок. Не хватает уверенности и статуса «заменено». Пример: «без
+        UI-библиотек» сменилось на b24ui правкой на месте — история видна только в шаге 8.</p>
+      <div class="foot"><span class="st st-idea">Предложение</span><a href="https://learn.microsoft.com/en-us/azure/well-architected/architect-role/architecture-decision-record">Microsoft Learn →</a></div>
+    </div>
+    <div class="p">
+      <div class="p-h"><span class="id">П7</span><b>Условия готовности (Definition of Done)</b><span class="co">Microsoft</span></div>
+      <p class="what">Готовый список на трёх уровнях. Задача: выполнены критерии приёмки, собирается без ошибок, юнит-тесты
+        написаны и проходят, старые тесты проходят, достаточно журналирования, проверка кода, обновлена документация,
+        владелец подтвердил. Итерация: плюс интеграционные, нагрузочные и сквозные тесты. Выпуск: готов к установке.</p>
+      <p class="our"><b>У нас:</b> адаптировать, а не придумывать. «Владелец подтвердил» = пользователь смотрит результат.</p>
+      <div class="foot"><span class="st st-idea">Предложение</span><a href="https://microsoft.github.io/code-with-engineering-playbook/agile-development/team-agreements/definition-of-done/">Плейбук Microsoft →</a></div>
+    </div>
+    <div class="p">
+      <div class="p-h"><span class="id">П8</span><b>Модель угроз STRIDE</b><span class="co">Microsoft</span></div>
+      <p class="what">По схеме потоков данных для каждого потока проверить шесть угроз: подмена, порча данных, отказ
+        от действия, утечка, отказ в обслуживании, повышение прав. Ищет дыры в устройстве, пока их дёшево закрыть.</p>
+      <p class="our"><b>У нас:</b> черновик по решениям шага 7 есть. Полную модель — в плане кода;
+        по ней же объём пентеста (З3).</p>
+      <div class="foot"><span class="st st-done">Черновик есть</span></div>
+    </div>
+    <div class="p">
+      <div class="p-h"><span class="id">П9</span><b>Правила API</b><span class="co">Microsoft · Google</span></div>
+      <p class="what">Единый формат ошибок, постраничная выдача длинных списков, ключ повтора для операций создания,
+        404 вместо 403 там, где нельзя выдавать сам факт существования.</p>
+      <p class="our"><b>У нас:</b> заложить в контракт <code>/partner/api/v1</code>. 404 вместо 403 у нас уже решено (шаг 7);
+        ключ повтора — это и есть защита передачи из «главной находки».</p>
+      <div class="foot"><span class="st st-idea">Предложение</span><a href="https://github.com/microsoft/api-guidelines">Microsoft →</a><a href="https://docs.cloud.google.com/apis/design">Google →</a></div>
+    </div>
+    <div class="p">
+      <div class="p-h"><span class="id">П10</span><b>Тесты по размерам</b><span class="co">Google</span></div>
+      <p class="what">Маленькие — без внешних систем, миллисекунды; средние — с базой, на одной машине; большие — вся система.
+        Примерно 70 / 20 / 10.</p>
+      <p class="our"><b>У нас:</b> маленькие — расчёт денег и 30 сделок приёмки; средние — работа с ORM Битрикса на тестовом
+        портале; большие, немного — вход, «А не видит Б», передача клиента через браузер.</p>
+      <div class="foot"><span class="st st-idea">Предложение</span><a href="https://testing.googleblog.com/2011/03/">Google Testing Blog →</a></div>
+    </div>
+    <div class="p">
+      <div class="p-h"><span class="id">П11</span><b>Скорость на телефоне</b><span class="co">Google</span></div>
+      <p class="what">Core Web Vitals, «хорошо» для 75 % визитов: загрузка главного содержимого ≤ 2,5 с, отклик на нажатие
+        ≤ 200 мс, сдвиги вёрстки ≤ 0,1.</p>
+      <p class="our"><b>У нас:</b> измеримое требование к кабинету на мобильной связи вместо «должно быть быстро».
+        Проверять на экранах 360 px.</p>
+      <div class="foot"><span class="st st-idea">Предложение</span><a href="https://web.dev/articles/defining-core-web-vitals-thresholds">web.dev →</a></div>
+    </div>
+  </div>
+
+  <div class="group-h" id="launch"><h2>К запуску и обновлениям</h2><span>М16–М17 и сопровождение</span></div>
+  <div class="pr">
+    <div class="p">
+      <div class="p-h"><span class="id">П12</span><b>Чек-лист готовности к запуску</b><span class="co">Amazon · Google</span></div>
+      <p class="what">Перед запуском — проверка по списку, составленному из прошлых сбоев: безопасность обновления,
+        обнаружение проблем, кому звонить, план отката. У Google — чек-лист запуска в книге SRE (приложение E).</p>
+      <p class="our"><b>У нас:</b> чек-лист установки у клиента: DNS, сертификат, почта с SPF/DKIM, cron, роли не пустые,
+        юридические тексты, резервная копия, кто отвечает. Часть пунктов может проверять сама страница «Проверка».</p>
+      <div class="foot"><span class="st st-idea">Предложение</span><a href="https://docs.aws.amazon.com/wellarchitected/latest/operational-readiness-reviews/wa-operational-readiness-reviews.html">AWS ORR →</a><a href="https://sre.google/sre-book/table-of-contents/">SRE →</a></div>
+    </div>
+    <div class="p">
+      <div class="p-h"><span class="id">П13</span><b>Обновления в два шага</b><span class="co">Amazon</span></div>
+      <p class="what">Формат данных меняют в два выпуска: сначала версия умеет читать новое, но пишет по-старому; потом
+        начинает писать новое. Старое удаляют, только когда все данные переписаны. Каждое обновление проверяют и откатом назад.</p>
+      <p class="our"><b>У нас:</b> к «версии + миграции» модуля: новые поля и таблицы добавляем сразу, старые убираем только
+        в следующей версии; обновление с прошлой версии проверяем на копии; резервная копия перед обновлением.
+        Связано с открытым вопросом про <code>updater.php</code>.</p>
+      <div class="foot"><span class="st st-idea">Предложение</span><a href="https://builder.aws.com/content/3F04j2yRAAMBuPSPs50xwXZqg01/ensuring-rollback-safety-during-deployments">Builders' Library →</a></div>
+    </div>
+  </div>
+
+  <div class="group-h" id="learn"><h2>Учиться бесплатно</h2></div>
+  <div class="grid g3">
+    <div class="card"><h3>Git за час</h3><p class="small">GitHub Skills: интерактивные курсы прямо в GitHub, «Introduction to GitHub» — меньше часа.
+      К рекомендации завести git.</p><a class="small" href="https://skills.github.com">skills.github.com →</a></div>
+    <div class="card"><h3>Техническое письмо</h3><p class="small">Google Technical Writing One и Two: самостоятельно плюс живые занятия.
+      Пригодится для инструкций и руководств (п. 10 ТЗ). На английском.</p><a class="small" href="https://developers.google.com/tech-writing/announcements">developers.google.com →</a></div>
+    <div class="card"><h3>Моделирование угроз</h3><p class="small">Microsoft Learn: модуль безопасной разработки, раздел про STRIDE и схемы потоков данных.</p>
+      <a class="small" href="https://learn.microsoft.com/en-us/training/modules/introduction-to-secure-devops/7-understand-threat-modeling">learn.microsoft.com →</a></div>
+  </div>
+  <p class="small muted">На потом: <a href="https://docs.aws.amazon.com/wellarchitected/latest/saas-lens/saas-lens.html">AWS SaaS Lens</a> — для этапа 2
+    (облако, много клиентов на одной системе); метрики DORA (частота выпусков, время до выпуска, доля неудачных, время восстановления) — для сопровождения;
+    <a href="https://microsoft.github.io/code-with-engineering-playbook/">плейбук Microsoft целиком</a> — чек-лист основ разработки из 12 разделов, разборы вариантов (trade studies).</p>
+
+  <section id="match" class="card" aria-labelledby="match-h">
+    <h2 id="match-h">Что у нас уже совпадает с практикой</h2>
+    <ul class="check">
+      <li><b>Шаги разбора с вариантами и рекомендацией</b> — у Microsoft это называется trade study: варианты, критерии,
+        выбор, запись в журнал решений.</li>
+      <li><b>404 вместо 403</b> для чужих данных — так же в гайдлайнах API Microsoft.</li>
+      <li><b>Уникальный ID оплаты</b> против двойного начисления — тот же приём, что у Amazon.</li>
+      <li><b>Журнал начислений «только добавление»</b>, исправление — новой строкой: тот же принцип, что у журнала решений Microsoft.</li>
+      <li><b>DECISIONS.md в Markdown рядом с проектом</b> — так советует Google Cloud для журнала решений.</li>
+      <li><b>Безопасность с первой стадии</b> — основа Microsoft SDL.</li>
+    </ul>
+  </section>
+
+  <section id="src" class="card" aria-labelledby="src-h">
+    <h2 id="src-h">Источники</h2>
+    <ul class="src small">
+      <li>Amazon Builders' Library: <a href="https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/">идемпотентные API</a>,
+        <a href="https://builder.aws.com/content/3F04j2yRAAMBuPSPs50xwXZqg01/ensuring-rollback-safety-during-deployments">безопасный откат обновлений</a>.</li>
+      <li>AWS: <a href="https://docs.aws.amazon.com/wellarchitected/latest/operational-readiness-reviews/wa-operational-readiness-reviews.html">Operational Readiness Reviews</a>,
+        <a href="https://docs.aws.amazon.com/wellarchitected/latest/saas-lens/saas-lens.html">SaaS Lens</a>.</li>
+      <li>Amazon: решения типа 1 и 2 — письмо Безоса акционерам 2015 г. (<a href="https://productmindset.substack.com/p/bezos-decision-making-framework">обзор</a>);
+        PR/FAQ — книга К. Брайара и Б. Карра «Working Backwards» (<a href="https://productschool.com/blog/product-fundamentals/prfaq">обзор</a>).</li>
+      <li>Microsoft: <a href="https://learn.microsoft.com/en-us/azure/well-architected/architect-role/architecture-decision-record">журнал архитектурных решений</a>,
+        <a href="https://microsoft.github.io/code-with-engineering-playbook/">Code-With Engineering Playbook</a>
+        (<a href="https://microsoft.github.io/code-with-engineering-playbook/agile-development/team-agreements/definition-of-done/">Definition of Done</a>,
+        <a href="https://microsoft.github.io/code-with-engineering-playbook/design/design-reviews/trade-studies/">trade studies</a>),
+        <a href="https://learn.microsoft.com/en-us/training/modules/introduction-to-secure-devops/7-understand-threat-modeling">моделирование угроз</a>,
+        <a href="https://github.com/microsoft/api-guidelines">REST API Guidelines</a>.</li>
+      <li>Google: <a href="https://www.industrialempathy.com/posts/design-docs-at-google/">проектные документы</a> (М. Убл),
+        <a href="https://docs.cloud.google.com/architecture/architecture-decision-records">журнал решений в Google Cloud</a>,
+        <a href="https://docs.cloud.google.com/apis/design">API Design Guide</a>,
+        <a href="https://web.dev/articles/defining-core-web-vitals-thresholds">пороги Core Web Vitals</a>,
+        <a href="https://sre.google/sre-book/table-of-contents/">книга SRE</a>,
+        <a href="https://testing.googleblog.com/2011/03/">размеры тестов</a>,
+        <a href="https://developers.google.com/tech-writing/announcements">курсы технического письма</a>.</li>
+      <li>Atlassian Team Playbook: <a href="https://www.atlassian.com/team-playbook/plays/pre-mortem">pre-mortem</a>,
+        <a href="https://www.atlassian.com/team-playbook/plays/daci">DACI</a> — роли в решении: ведущий, утверждающий, советники, информируемые.</li>
+      <li>GitHub: <a href="https://skills.github.com">GitHub Skills</a>.</li>
+    </ul>
+  </section>
+
+  <footer>Снимок на 21.10.2026 · Кабинет партнёра · карта проекта</footer>
+</main>
+<script>
+(function(){
+  var KEY='zk-map-theme', root=document.documentElement, btn=document.getElementById('themeBtn');
+  var names={auto:'Тема: авто',light:'Тема: светлая',dark:'Тема: тёмная'};
+  function get(){try{return localStorage.getItem(KEY)||'auto'}catch(e){return 'auto'}}
+  function set(v){try{localStorage.setItem(KEY,v)}catch(e){}}
+  function apply(v){if(v==='auto'){root.removeAttribute('data-theme')}else{root.setAttribute('data-theme',v)} if(btn){btn.textContent=names[v]}}
+  var cur=get(); apply(cur);
+  if(btn){btn.addEventListener('click',function(){cur=cur==='auto'?'light':(cur==='light'?'dark':'auto'); set(cur); apply(cur)})}
+})();
+</script>
+</body>
+</html>
