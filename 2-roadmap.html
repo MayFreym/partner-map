@@ -85,11 +85,24 @@ footer{margin:40px 0 32px;color:var(--muted);font-size:13px;border-top:1px solid
 /* ===== Страница ===== */
 .legend{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 /* хроника */
-.chron{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;align-items:start}
-.chron .day{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:12px 14px;border-top:4px solid var(--ok)}
-.chron .day.today{border-top-color:var(--accent)}
-.chron .day b{display:block;font-size:13px;color:var(--muted)}
-.chron .day ul{margin:6px 0 0;padding-left:18px;font-size:14px}
+.chron{display:grid;gap:8px}
+details.day{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--ok);border-radius:var(--r-lg);box-shadow:var(--shadow-s)}
+details.day.today{border-left-color:var(--accent)}
+details.day[open]{border-color:var(--line-2);border-left-color:var(--ok)}
+details.day.today[open]{border-left-color:var(--accent)}
+details.day>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:150px 1fr auto;gap:12px;align-items:center;padding:12px 16px}
+details.day>summary::-webkit-details-marker{display:none}
+details.day .dt{font-size:14px;color:var(--muted)}
+details.day .tt{font-weight:700;font-size:16px;line-height:1.3}
+details.day .ds{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+details.day .right{display:flex;align-items:center;gap:8px;white-space:nowrap}
+details.day .hrs{font-weight:700;font-variant-numeric:tabular-nums}
+details.day .chev{color:var(--dim);font-size:13px;transition:transform .15s;display:inline-block}
+details.day[open] .chev{transform:rotate(90deg)}
+details.day ul{list-style:none;margin:0;padding:0 16px 12px 178px}
+details.day li{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:7px 0;border-top:1px solid var(--line);font-size:14px}
+details.day li .h{color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+@media (max-width:600px){details.day>summary{grid-template-columns:1fr auto;padding:12px 14px}details.day .dt{grid-column:1/-1}details.day ul{padding:0 14px 12px}}
 /* вехи */
 .phase{margin:18px 0 6px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .phase h3{margin:0}
@@ -176,28 +189,64 @@ ol.ms>li.next .dot{border-color:var(--accent);color:var(--link)}
 
   <section aria-labelledby="chron-h">
     <h2 id="chron-h">Что уже пройдено</h2>
+    <p class="small muted">Каждый день можно развернуть.</p>
     <div class="chron">
-      <div class="day"><b>14.10.2026</b><ul>
-        <li>ТЗ разобрано в 12 шагов</li><li>Правило этапов: коробка → облако</li><li>Опросник: 55 вопросов, Word + Markdown</li></ul></div>
-      <div class="day"><b>16.10.2026</b><ul>
-        <li>Пришли частичные ответы заказчика</li><li>Принцип продукта «как есть»</li><li>Установка из портала, права — матрица Битрикса</li></ul></div>
-      <div class="day"><b>19.10.2026</b><ul>
-        <li>Решены Е1, И1, Л5, Ж1–Ж3, Л6</li><li>Кликабельный прототип: телефон и компьютер</li></ul></div>
-      <div class="day"><b>20.10.2026</b><ul>
-        <li>UI-кит b24ui, прототип в стиле Bitrix24 Air</li><li>Разбор ответов закрыт: 55 из 55</li><li>План разговора (22 вопроса), технические вопросы Т1–Т9, заготовки юридических текстов</li></ul></div>
-      <div class="day"><b>21.10.2026</b><ul>
-        <li>Карта проекта: процесс, дорожная карта, структура</li>
-        <li>Практики Google, Microsoft, Amazon, Atlassian; находка — повтор передачи клиента</li>
-        <li>Сознательно отложено до вех — напоминания на М4, М5, М7</li>
-        <li>Git-репозиторий проекта; сайт карты для менеджера</li>
-        <li>Ответы заказчика на 22 вопроса и описание его CRM — разобраны</li>
-        <li>Рабочий документ сжат: «где остановились» — одна страница; архитектура сверена с решениями</li>
-        <li>Черновик единого списка рисков — 38 рисков к предложению</li></ul></div>
-      <div class="day today"><b>22.10.2026 · сегодня</b><ul>
-        <li>Карта сверена с решениями: устаревшие места исправлены</li>
-        <li>Порядок актуальности: чек-лист после каждого изменения и автопроверка карты перед обновлением сайта</li>
-        <li>Закрываем стадию «Требования»: все вопросы для закрытия пройдены, документ заказчику готов; выбор участка из каталога — в доработки</li>
-        <li>Технические вопросы Т1–Т9 ответили сами — всё к установке; быстрый откат установки ступенями</li></ul></div>
+      <details class="day">
+        <summary><b class="dt">14.10.2026</b><span><span class="tt">Старт: ТЗ, этапы, опросник</span><span class="ds">3 пункта</span></span><span class="right"><span class="chev">▶</span></span></summary>
+        <ul>
+          <li><span>ТЗ разобрано в 12 шагов</span></li>
+          <li><span>Правило этапов: коробка → облако</span></li>
+          <li><span>Опросник: 55 вопросов, Word + Markdown</span></li>
+        </ul>
+      </details>
+      <details class="day">
+        <summary><b class="dt">16.10.2026</b><span><span class="tt">Первые ответы заказчика</span><span class="ds">4 пункта</span></span><span class="right"><span class="chev">▶</span></span></summary>
+        <ul>
+          <li><span>Универсальное приложение на коробку и облако — рассмотрели, отказались</span></li>
+          <li><span>Пришли частичные ответы заказчика — разобрали по одному</span></li>
+          <li><span>Установка из портала, отдельный поддомен</span></li>
+          <li><span>Принцип продукта «как есть»; права — матрица Битрикса</span></li>
+        </ul>
+      </details>
+      <details class="day">
+        <summary><b class="dt">19.10.2026</b><span><span class="tt">Решения по ответам и прототип</span><span class="ds">2 пункта</span></span><span class="right"><span class="chev">▶</span></span></summary>
+        <ul>
+          <li><span>Решены Е1, И1, Л5, Ж1–Ж3, Л6</span></li>
+          <li><span>Кликабельный прототип: телефон и компьютер</span></li>
+        </ul>
+      </details>
+      <details class="day">
+        <summary><b class="dt">20.10.2026</b><span><span class="tt">UI-кит, разбор ответов закрыт, план разговора</span><span class="ds">5 пунктов</span></span><span class="right"><span class="chev">▶</span></span></summary>
+        <ul>
+          <li><span>UI-кит b24ui, прототип в стиле Bitrix24 Air</span></li>
+          <li><span>Разбор ответов закрыт: 55 из 55</span></li>
+          <li><span>Заготовки юридических текстов</span></li>
+          <li><span>План разговора с заказчиком: 22 вопроса</span></li>
+          <li><span>Технические вопросы Т1–Т9 — список</span></li>
+        </ul>
+      </details>
+      <details class="day">
+        <summary><b class="dt">21.10.2026</b><span><span class="tt">Карта проекта, git, ответы на 22 вопроса</span><span class="ds">7 пунктов</span></span><span class="right"><span class="chev">▶</span></span></summary>
+        <ul>
+          <li><span>Карта проекта: процесс, дорожная карта, структура</span></li>
+          <li><span>Практики Google, Microsoft, Amazon, Atlassian; находка — повтор передачи клиента</span></li>
+          <li><span>Сознательно отложено до вех — напоминания на М4, М5, М7</span></li>
+          <li><span>Git-репозиторий проекта; сайт карты для менеджера</span></li>
+          <li><span>Ответы заказчика на 22 вопроса и описание его CRM — разобраны</span></li>
+          <li><span>Рабочий документ сжат: «где остановились» — одна страница; архитектура сверена с решениями</span></li>
+          <li><span>Черновик единого списка рисков — 38 рисков к предложению</span></li>
+        </ul>
+      </details>
+      <details class="day today" open>
+        <summary><b class="dt">22.10.2026 · сегодня</b><span><span class="tt">Порядок актуальности, закрываем «Требования»</span><span class="ds">5 пунктов</span></span><span class="right"><span class="chev">▶</span></span></summary>
+        <ul>
+          <li><span>Карта сверена с решениями: устаревшие места исправлены</span></li>
+          <li><span>Порядок актуальности: чек-лист после каждого изменения и автопроверка карты перед обновлением сайта</span></li>
+          <li><span>Закрываем стадию «Требования»: все вопросы для закрытия пройдены, документ заказчику готов; выбор участка из каталога — в доработки</span></li>
+          <li><span>Технические вопросы Т1–Т9 ответили сами — всё к установке; быстрый откат установки ступенями</span></li>
+          <li><span>Хроника «Что уже пройдено» — по дням, сворачивается</span></li>
+        </ul>
+      </details>
     </div>
   </section>
 
@@ -216,7 +265,7 @@ ol.ms>li.next .dot{border-color:var(--accent);color:var(--link)}
           ставки — три уровня с группами партнёров. План разговора.</p>
         <div class="blk">Остались уточнения заказчику (документ «Уточнения перед предложением»): <em>режим начисления и возвраты вне приёмки — подтвердить, задаток, выбор ставки, версия ТЗ, критерии приёмки</em>;
           наши встречные предложения — максимальная ставка, без сообщений менеджеру в первом запуске; воронка — работаем на его «Агентах».</div></div></li>
-      <li class="client"><span class="dot">3</span><div class="ms-card">
+      <li class="done"><span class="dot">✓</span><div class="ms-card">
         <div class="ms-head"><span class="code">М3</span><b>Ответы на технические вопросы</b><span class="st st-done">Готово</span></div>
         <p>Т1–Т9 пройдены с вами (22.10): заказчика сейчас не спрашиваем, всё к установке.
           Список с ответами — основа чек-листа установки. Добавлено: откат ступенями, капча настройкой, срок сертификата и неотправленные письма в «Проверке».</p></div></li>
