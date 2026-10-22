@@ -213,22 +213,22 @@ ol.ms>li.next .dot{border-color:var(--accent);color:var(--link)}
         <div class="ms-head"><span class="code">М2</span><b>Ответы заказчика на 22 вопроса</b><span class="st st-done">Готово</span></div>
         <p>Ответы и описание CRM заказчика получены и разобраны 21.10: деньги — в CRM, агентства и акт по шаблону — этап развития,
           ставки — три уровня с группами партнёров. План разговора.</p>
-        <div class="blk">Остались уточнения заказчику: <em>что считать оплатой и возвраты, задаток, выбор ставки, ключ партнёра</em>;
+        <div class="blk">Остались уточнения заказчику (документ «Уточнения перед предложением»): <em>режим начисления и возвраты вне приёмки — подтвердить, задаток, выбор ставки, версия ТЗ, критерии приёмки</em>;
           наши встречные предложения — новая воронка, максимальная ставка, без сообщений менеджеру в первом запуске.</div></div></li>
       <li class="client"><span class="dot">3</span><div class="ms-card">
-        <div class="ms-head"><span class="code">М3</span><b>Ответы администратора заказчика</b><span class="st st-client">Ждём заказчика</span></div>
+        <div class="ms-head"><span class="code">М3</span><b>Ответы на технические вопросы</b><span class="st st-us">Решаем мы</span></div>
         <p>Т1–Т9: версия и лицензия портала, DNS, SSL, доступ к серверу, учётные записи, почта, cron, капча, место для копии портала.
-          Список. Предложение не держат, нужны к установке. Заказчик ссылается на «решение по Т6» — ответы до нас не дошли, попросить.</p></div></li>
+          Список. Предложение не держат, нужны к установке. Отвечаем вместе (22.10); к администратору заказчика — только то, что знает лишь он.</p></div></li>
       <li class="us"><span class="dot">4</span><div class="ms-card">
         <div class="ms-head"><span class="code">М4</span><b>Наши решения</b><span class="st st-us">Решаем мы</span></div>
-        <p>Компоненты кита или только стили → затем TS или JS; В7 — реквизиты партнёров; Д4 — возврат после выплаты;
+        <p>Компоненты кита или только стили → затем TS или JS; В7 — реквизиты партнёров; Т1–Т9 — технические вопросы, отвечаем сами;
           лицензия тестового портала; устройство тестового стенда и финальная проверка у заказчика (Б6); «клиент из базы» — разобрать (Г5).</p>
         <div class="remind"><b>Не забыть:</b> формат DECISIONS.md — уровень уверенности и статус «заменено» (Практики, П6). Меняем только по вашему решению.</div></div></li>
       <li class="next"><span class="dot">5</span><div class="ms-card">
         <div class="ms-head"><span class="code">М5</span><b>Предложение по п. 13 ТЗ</b><span class="st st-future">Впереди</span></div>
         <p>Архитектура и размещение, интеграция, вход и защита, хранение данных, прототипы, этапы, оценка диапазоном,
           поддержка, риски и вопросы.</p>
-        <div class="blk">Держат: уточнения заказчика — <em>что считать оплатой и возвраты</em> (объём), <em>ключ партнёра</em> (вход по SMS меняет оценку); встречные предложения.</div>
+        <div class="blk">Держат: <em>версия ТЗ</em> (Д3), встречные предложения (Г1, И1), <em>критерии приёмки</em> (Б9); оценка — после решения «кит или стили».</div>
         <div class="remind"><b>Не забыть перед предложением:</b> час pre-mortem вместе с вами → единый список рисков → раздел «Риски» (Практики, П2–П3). Черновик списка готов 21.10 — 38 рисков, оценки ждут вашей проверки. С выходом предложения рабочий документ разбора замораживается: дальше — предложение и сводка решений.</div></div></li>
       <li><span class="dot">6</span><div class="ms-card">
         <div class="ms-head"><span class="code">М6</span><b>Договор</b><span class="st st-future">Впереди</span></div>
@@ -242,7 +242,7 @@ ol.ms>li.next .dot{border-color:var(--accent);color:var(--link)}
         <div class="ms-head"><span class="code">М7</span><b>План кода</b><span class="st st-future">Впереди</span></div>
         <p>Модель данных, контракт API кабинета (OpenAPI), структура модуля, список прав, бэклог задач, условия готовности,
           30 сделок приёмки — в тестовые сценарии.</p>
-        <div class="blk">Держат: <em>кит или стили / TS или JS</em>; детали расчёта — <em>Д1, Д9, выбор ставки</em>.</div>
+        <div class="blk">Держат: <em>кит или стили / TS или JS</em>; детали расчёта — <em>Д9, выбор ставки</em>.</div>
         <div class="remind"><b>Не забыть в плане кода:</b> полная модель угроз из черновика (+ срок хранения журнала, лимит запросов к API) ·
           Definition of Done на трёх уровнях · контракт API с единым форматом ошибок и ID передачи (Практики, П7–П9).</div></div></li>
       <li><span class="dot">8</span><div class="ms-card">
@@ -258,7 +258,7 @@ ol.ms>li.next .dot{border-color:var(--accent);color:var(--link)}
         <div class="ms-head"><span class="code">М10</span><b>Ядро: клиенты и деньги</b><span class="st st-future">Впереди</span></div>
         <p>Передача тремя способами, проверка дублей, закрепление, этапы партнёра, правила ставок, начисления, сторно —
           с юнит-тестами на сценарии приёмки.</p>
-        <div class="blk">Держат: <em>Д1</em> (что считать оплатой, возвраты), <em>Д9</em> (задаток), выбор ставки (Е5).</div></div></li>
+        <div class="blk">Держат: <em>Д9</em> (задаток), выбор ставки (Е5). Режим начисления — настройка, оба варианта (Д1).</div></div></li>
       <li><span class="dot">11</span><div class="ms-card">
         <div class="ms-head"><span class="code">М11</span><b>Кабинет целиком</b><span class="st st-future">Впереди</span></div>
         <p>Главная, мои клиенты, карточка, передача, вознаграждение, документы, профиль, уведомления, сеансы — телефон и компьютер.</p></div></li>
@@ -283,7 +283,7 @@ ol.ms>li.next .dot{border-color:var(--accent);color:var(--link)}
       <li><span class="dot">16</span><div class="ms-card">
         <div class="ms-head"><span class="code">М16</span><b>Установка у заказчика и приёмка</b><span class="st st-future">Впереди</span></div>
         <p>Копия рабочего портала на сервере заказчика; DNS, сертификат, почта, воронка; приёмка по п. 12 ТЗ.</p>
-        <div class="blk">Держат: <em>финальная проверка</em> (копия портала или пилот), <em>Т1–Т9</em>, <em>Д9</em> (эталон расчёта); доработка CRM заказчиком (Г1).</div></div></li>
+        <div class="blk">Держат: <em>финальная проверка</em> (копия портала или пилот), <em>Т1–Т9</em>, <em>Д9</em> (эталон расчёта), <em>Б9</em> (критерии приёмки); доработка CRM заказчиком (Г1).</div></div></li>
       <li><span class="dot">17</span><div class="ms-card">
         <div class="ms-head"><span class="code">М17</span><b>Запуск</b><span class="st st-future">Впереди</span></div>
         <p>Сначала несколько партнёров (пилот), потом все.</p>
@@ -303,27 +303,25 @@ ol.ms>li.next .dot{border-color:var(--accent);color:var(--link)}
     <div class="tbl"><table class="mx">
       <thead><tr><th>Вопрос</th><th>Тип решения<br><span class="muted">оценка Claude</span></th><th class="c">Предложение<br><span class="muted">М5</span></th><th class="c">Договор<br><span class="muted">М6</span></th><th class="c">План кода<br><span class="muted">М7</span></th><th class="c">Ядро и демо<br><span class="muted">М8–М14</span></th><th class="c">Приёмка<br><span class="muted">М16</span></th><th class="c">Запуск<br><span class="muted">М17</span></th></tr></thead>
       <tbody>
-        <tr><td><b>Д1★</b> Что считать оплатой; возвраты в этапе 1<span class="who st st-client">Ждём заказчика</span></td><td><span class="ty ty-2">дорого менять</span></td><td class="c"><b class="af">○</b></td><td class="c"></td><td class="c"><b class="bl">●</b></td><td class="c"><b class="bl">●</b></td><td class="c"></td><td class="c"></td></tr>
+        <tr><td><b>Д1</b> Режим начисления — подтвердить; возврат вне приёмки<span class="who st st-client">Ждём заказчика</span></td><td><span class="ty ty-3">обратимо</span></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"><b class="bl">●</b></td><td class="c"></td></tr>
         <tr><td><b>Д9</b> Задаток и «первая оплата»<span class="who st st-client">Ждём заказчика</span></td><td><span class="ty ty-f">выяснить факт</span></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"><b class="af">○</b></td><td class="c"><b class="bl">●</b></td><td class="c"></td></tr>
         <tr><td><b>Е5</b> Выбор ставки — максимальная (наше встречное)<span class="who st st-client">Ждём заказчика</span></td><td><span class="ty ty-2">дорого менять</span></td><td class="c"></td><td class="c"></td><td class="c"><b class="bl">●</b></td><td class="c"><b class="bl">●</b></td><td class="c"></td><td class="c"></td></tr>
-        <tr><td><b>Ключ партнёра</b> телефон: вход по e-mail или по SMS<span class="who st st-client">Ждём заказчика</span></td><td><span class="ty ty-2">дорого менять</span></td><td class="c"><b class="af">○</b></td><td class="c"></td><td class="c"><b class="bl">●</b></td><td class="c"></td><td class="c"></td><td class="c"></td></tr>
         <tr><td><b>Г1</b> Новая воронка (наше встречное); автоматизации заказчика до приёмки<span class="who st st-client">Ждём заказчика</span></td><td><span class="ty ty-2">дорого менять</span></td><td class="c"><b class="af">○</b></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"><b class="bl">●</b></td><td class="c"><b class="bl">●</b></td></tr>
         <tr><td><b>И1</b> Без сообщений менеджеру в первом запуске (наше встречное)<span class="who st st-client">Ждём заказчика</span></td><td><span class="ty ty-3">обратимо</span></td><td class="c"><b class="af">○</b></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td></tr>
         <tr><td><b>Д3</b> Откуда цитаты про «версию Б» требований<span class="who st st-client">Ждём заказчика</span></td><td><span class="ty ty-f">выяснить факт</span></td><td class="c"><b class="af">○</b></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td></tr>
         <tr><td><b>З2★</b> Юридические тексты — юрист заказчика до приёмки<span class="who st st-client">Ждём заказчика</span></td><td><span class="ty ty-f">выяснить факт</span></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"><b class="bl">●</b></td></tr>
-        <tr><td><b>Т1–Т9, Б7</b> Сервер, домен, почта<span class="who st st-client">Ждём администратора</span></td><td><span class="ty ty-f">выяснить факт</span></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"><b class="bl">●</b></td><td class="c"><b class="bl">●</b></td></tr>
+        <tr><td><b>Т1–Т9, Б7</b> Сервер, домен, почта<span class="who st st-us">Решаем мы · вместе</span></td><td><span class="ty ty-f">выяснить факт</span></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"><b class="bl">●</b></td><td class="c"><b class="bl">●</b></td></tr>
         <tr><td><b>Права на код, ПДн, граница ответственности</b> <span class="who st st-us">Решаем мы · юрист</span></td><td><span class="ty ty-1">необратимо</span></td><td class="c"><b class="af">○</b></td><td class="c"><b class="bl">●</b></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td></tr>
         <tr><td><b>Кит или стили → TS или JS</b> <span class="who st st-us">Решаем мы</span></td><td><span class="ty ty-2">дорого менять</span></td><td class="c"><b class="af">○</b></td><td class="c"></td><td class="c"><b class="bl">●</b></td><td class="c"></td><td class="c"></td><td class="c"></td></tr>
         <tr><td><b>Тестовый портал</b> (лицензия)<span class="who st st-us">Решаем мы</span></td><td><span class="ty ty-3">обратимо</span></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"><b class="bl">●</b></td><td class="c"></td><td class="c"></td></tr>
-        <tr><td><b>Б6</b> Финальная проверка: копия портала или пилот<span class="who st st-us">Решаем мы → заказчик</span></td><td><span class="ty ty-f">выяснить факт</span></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"><b class="bl">●</b></td><td class="c"></td></tr>
+        <tr><td><b>Б9</b> Критерии приёмки: возврат вне приёмки, ручной расчёт 30 сделок, копия портала или пилот<span class="who st st-client">Ждём заказчика</span></td><td><span class="ty ty-2">дорого менять</span></td><td class="c"><b class="af">○</b></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"><b class="bl">●</b></td><td class="c"></td></tr>
         <tr><td><b>Г5</b> «Клиент из базы» — разобрать<span class="who st st-us">Решаем мы</span></td><td><span class="ty ty-3">обратимо</span></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"><b class="af">○</b></td><td class="c"></td><td class="c"></td></tr>
         <tr><td><b>В7</b> Реквизиты партнёров<span class="who st st-us">Решаем мы</span></td><td><span class="ty ty-2">дорого менять</span></td><td class="c"></td><td class="c"></td><td class="c"><b class="af">○</b></td><td class="c"></td><td class="c"></td><td class="c"></td></tr>
-        <tr><td><b>Д4</b> Возврат после выплаты<span class="who st st-us">Решаем мы · после Д1</span></td><td><span class="ty ty-3">обратимо</span></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"><b class="af">○</b></td><td class="c"></td></tr>
         <tr><td><b>Повтор передачи клиента</b> без дублей сделок<span class="who st st-us">Решаем мы</span></td><td><span class="ty ty-2">дорого менять</span></td><td class="c"></td><td class="c"></td><td class="c"><b class="bl">●</b></td><td class="c"><b class="af">○</b></td><td class="c"></td><td class="c"></td></tr>
       </tbody>
     </table></div>
-    <p class="small muted">Сейчас главный узел — уточнения у заказчика: 9 строк из 17 ждут его ответа. Необратимое — только права
-      на код и договор (у нас, с юристом). У заказчика дорогие — что считать оплатой, выбор ставки, ключ партнёра и новая воронка: с них и начинать.</p>
+    <p class="small muted">Сейчас главный узел — уточнения у заказчика: 8 строк из 15 ждут его ответа. Необратимое — только права
+      на код и договор (у нас, с юристом). У заказчика дорогие — выбор ставки, новая воронка и критерии приёмки: с них и начинать.</p>
   </section>
 
   <section aria-labelledby="board-h">
@@ -334,7 +332,7 @@ ol.ms>li.next .dot{border-color:var(--accent);color:var(--link)}
         <div class="item">Разобрать ответы заказчика на 22 вопроса и описание его CRM<div class="tags"><span class="st st-done">Готово</span><span class="tag">21.10</span></div></div>
         <div class="item">Собрать уточнения, встречные предложения и критерии приёмки заказчику в один документ<div class="tags"><span class="st st-doing">Черновик готов</span><span class="tag">22.10</span></div></div>
         <div class="item">Разобрать «клиент из базы» и устройство тестового стенда<div class="tags"><span class="st st-us">Решаем мы</span><span class="tag">Г5, Б6</span></div></div>
-        <div class="item">Получить ответы администратора<div class="tags"><span class="st st-client">Ждём заказчика</span><span class="tag">Т1–Т9</span></div></div>
+        <div class="item">Ответить на технические вопросы вместе<div class="tags"><span class="st st-us">Решаем мы</span><span class="tag">Т1–Т9</span></div></div>
         <div class="item">Правки прототипа: экран «Документы», одна синяя кнопка, «Позвонить» вместо «Написать менеджеру»<div class="tags"><span class="st st-us">ждут слова</span><span class="tag">Л3, И1</span></div></div>
         <div class="item">Разобрать содержание прототипа экран за экраном<div class="tags"><span class="st st-future">Впереди</span><span class="tag">п. 6.1–6.6</span></div></div>
         <div class="item">Решить: компоненты кита или только стили, затем TS или JS<div class="tags"><span class="st st-us">Решаем мы</span><span class="tag">шаг 8</span></div></div>
@@ -390,8 +388,8 @@ ol.ms>li.next .dot{border-color:var(--accent);color:var(--link)}
       <div class="idea"><b>Другие источники участков</b><p>Товарный каталог, универсальные списки, 1С, сайт застройщика — через точку расширения.</p><div class="tags"><span class="tag">Л5</span><span class="tag">шаг 8</span></div></div>
       <div class="idea"><b>Загрузка документов партнёром</b><p>Подписанный договор, чеки самозанятого — в закрытое хранилище.</p><div class="tags"><span class="tag">Л3</span><span class="tag">шаг 8</span></div></div>
       <div class="idea"><b>Несколько сотрудников в одном партнёре</b><p>Несколько e-mail для входа и общие клиенты — для агентств.</p><div class="tags"><span class="tag">Л1</span><span class="tag">для других клиентов</span></div></div>
-      <div class="idea"><b>Вход по SMS</b><p>Через провайдера коробки (messageservice). Интерфейс «канал доставки кода» закладываем сразу.</p><div class="tags"><span class="tag">Б8</span><span class="tag">шаг 7</span></div></div>
-      <div class="idea"><b>Удержание после возврата</b><p>Автоматическое удержание из следующей выплаты и перенос долга.</p><div class="tags"><span class="tag">Д4</span><span class="tag">шаг 4</span><span class="st st-us">после Д1</span></div></div>
+      <div class="idea"><b>Другие способы входа</b><p>SMS через провайдера коробки, код от бота в мессенджере, Яндекс ID или VK ID. Точку расширения «способ входа» закладываем сразу; партнёр находится по номеру телефона.</p><div class="tags"><span class="tag">Б8</span><span class="tag">шаг 7</span><span class="st st-done">решено: доработка</span></div></div>
+      <div class="idea"><b>Возвраты автоматически</b><p>Отмена начисления при отмене разнесения прихода; после выплаты — удержание из следующей. В этапе 1 возврат правится вручную.</p><div class="tags"><span class="tag">Д1, Д4</span><span class="tag">шаг 4</span><span class="st st-done">решено: доработка</span></div></div>
       <div class="idea"><b>Настраиваемый выбор ставки</b><p>Способ выбора — максимальная, первая по порядку или строгие уровни; флаг «перекрывает остальные» для персональной и повторной ставки.</p><div class="tags"><span class="tag">Е5</span><span class="tag">шаг 5</span></div></div>
       <div class="idea"><b>Перенос повторной сделки в партнёрскую воронку</b><p>Сейчас повторная покупка остаётся в ИЖС или ПРОМ. Для других клиентов — настройка «переносить».</p><div class="tags"><span class="tag">Г6</span><span class="tag">шаг 6</span></div></div>
       <div class="idea"><b>Расширенная настройка прав</b><p>Видимость полей и сумм по ролям, раздел «Партнёры» по отделам или группам, права на действия по сотрудникам.</p><div class="tags"><span class="tag">Д2</span><span class="tag">шаг 10</span></div></div>
@@ -399,7 +397,7 @@ ol.ms>li.next .dot{border-color:var(--accent);color:var(--link)}
 
     <div class="group-h"><h3>Ваши идеи</h3><span>«Обсудить позже» в РАЗБОР-ПЛАНА</span></div>
     <div class="ideas">
-      <div class="idea"><b>Вход и уведомления через мессенджеры</b><p>Бот присылает код или «Войти через VK ID / Яндекс ID». Учесть ограничения в РФ и 152-ФЗ.</p><div class="tags"><span class="tag">шаг 7</span><span class="st st-idea">Идея</span></div></div>
+      <div class="idea"><b>Уведомления через мессенджеры</b><p>Письма партнёру дублируются в мессенджер. Вход через мессенджеры — уже в доработках («Другие способы входа»). Учесть ограничения в РФ и 152-ФЗ.</p><div class="tags"><span class="tag">шаг 7</span><span class="st st-idea">Идея</span></div></div>
       <div class="idea"><b>Цвет и логотип клиента</b><p>Настройкой модуля через токены оформления — без правки кода.</p><div class="tags"><span class="tag">шаг 8</span><span class="st st-idea">Идея</span></div></div>
       <div class="idea"><b>Полная автоматизация установки</b><p>Включая DNS-запись и сертификат — без ручных шагов вне портала.</p><div class="tags"><span class="tag">шаг 2</span><span class="st st-idea">Идея</span></div></div>
       <div class="idea"><b>Менеджер решает судьбу дубля</b><p>Режим «с подтверждением»: передача ждёт менеджера, он выбирает контакт и отмечает «новый / из базы».</p><div class="tags"><span class="tag">Г4, Г5</span><span class="tag">шаг 6</span><span class="st st-idea">Идея</span></div></div>
