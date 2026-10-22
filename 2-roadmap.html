@@ -85,7 +85,7 @@ footer{margin:40px 0 32px;color:var(--muted);font-size:13px;border-top:1px solid
 /* ===== Страница ===== */
 .legend{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 /* хроника */
-.chron{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.chron{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;align-items:start}
 .chron .day{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:12px 14px;border-top:4px solid var(--ok)}
 .chron .day.today{border-top-color:var(--accent)}
 .chron .day b{display:block;font-size:13px;color:var(--muted)}
@@ -164,7 +164,7 @@ ol.ms>li.next .dot{border-color:var(--accent);color:var(--link)}
     <p class="lead">Путь этапа 1 от разговора с заказчиком до запуска, что блокирует каждый шаг, и что дальше:
       развитие продукта, доработки, облако, идеи.</p>
     <p class="meta">Без дат: оценки ещё нет, сроки появятся в предложении. Порядок — по зависимостям, а не по календарю
-      (формат «сейчас / дальше / потом», Джанна Бастоу). Снимок на 21.10.2026.</p>
+      (формат «сейчас / дальше / потом», Джанна Бастоу). Снимок на 22.10.2026.</p>
   </div>
 
   <section class="card">
@@ -185,7 +185,7 @@ ol.ms>li.next .dot{border-color:var(--accent);color:var(--link)}
         <li>Решены Е1, И1, Л5, Ж1–Ж3, Л6</li><li>Кликабельный прототип: телефон и компьютер</li></ul></div>
       <div class="day"><b>20.10.2026</b><ul>
         <li>UI-кит b24ui, прототип в стиле Bitrix24 Air</li><li>Разбор ответов закрыт: 55 из 55</li><li>План разговора (22 вопроса), технические вопросы Т1–Т9, заготовки юридических текстов</li></ul></div>
-      <div class="day today"><b>21.10.2026 · сегодня</b><ul>
+      <div class="day"><b>21.10.2026</b><ul>
         <li>Карта проекта: процесс, дорожная карта, структура</li>
         <li>Практики Google, Microsoft, Amazon, Atlassian; находка — повтор передачи клиента</li>
         <li>Сознательно отложено до вех — напоминания на М4, М5, М7</li>
@@ -193,6 +193,9 @@ ol.ms>li.next .dot{border-color:var(--accent);color:var(--link)}
         <li>Ответы заказчика на 22 вопроса и описание его CRM — разобраны</li>
         <li>Рабочий документ сжат: «где остановились» — одна страница; архитектура сверена с решениями</li>
         <li>Черновик единого списка рисков — 38 рисков к предложению</li></ul></div>
+      <div class="day today"><b>22.10.2026 · сегодня</b><ul>
+        <li>Карта сверена с решениями: устаревшие места исправлены</li>
+        <li>Порядок актуальности: чек-лист после каждого изменения и автопроверка карты перед обновлением сайта</li></ul></div>
     </div>
   </section>
 
@@ -337,6 +340,7 @@ ol.ms>li.next .dot{border-color:var(--accent);color:var(--link)}
         <div class="item">Выбрать лицензию тестового портала<div class="tags"><span class="st st-us">Решаем мы</span></div></div>
         <div class="item">Завести git-репозиторий проекта<div class="tags"><span class="st st-done">Готово</span><span class="tag">21.10</span></div></div>
         <div class="item">Черновик единого списка рисков (38) и сжатие рабочего документа<div class="tags"><span class="st st-done">Готово</span><span class="tag">21.10</span></div></div>
+        <div class="item">Сверить карту с решениями; чек-лист и автопроверка актуальности<div class="tags"><span class="st st-done">Готово</span><span class="tag">22.10</span></div></div>
         <div class="item">Час «вскрытия до смерти» (pre-mortem) по черновику рисков — вместе с вами<div class="tags"><span class="st st-us">Решаем мы</span><span class="tag">Практики, П2</span></div></div>
       </div>
       <div class="col nxt">
@@ -445,7 +449,7 @@ ol.ms>li.next .dot{border-color:var(--accent);color:var(--link)}
     <p class="small muted" style="margin:0">Простая формула для сравнения: (ценность × охват) ÷ трудоёмкость. Это упрощённый вариант RICE.</p>
   </section>
 
-  <footer>Снимок на 21.10.2026 · Кабинет партнёра · карта проекта</footer>
+  <footer>Снимок на 22.10.2026 · Кабинет партнёра · карта проекта</footer>
 </main>
 <script>
 (function(){
